@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Supporting Documents - Deniz Ülker</title>
+<style>
+  @font-face {
+    font-family: 'EB Garamond';
+    src: url('./fonts/eb-garamond-regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'EB Garamond';
+    src: url('./fonts/eb-garamond-italic.woff2') format('woff2');
+    font-weight: 400;
+    font-style: italic;
+  }
+  @font-face {
+    font-family: 'EB Garamond';
+    src: url('./fonts/eb-garamond-bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+  }
+
+  @page {
+    margin: 10mm 16mm;
+  }
+
+  body {
+    font-family: 'EB Garamond', serif;
+    font-size: 9.5pt;
+    line-height: 1.5;
+    color: #1a1a2e;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .header-left {
+    text-align: left;
+  }
+
+  .header-left h1 {
+    font-size: 14pt;
+    font-weight: 700;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .header-left .subtitle {
+    font-size: 9pt;
+    font-style: italic;
+    color: #555;
+    margin-top: 2px;
+  }
+
+  .header-right {
+    text-align: right;
+    font-style: italic;
+    font-size: 9pt;
+    color: #666;
+  }
+
+  .toc-container {
+    margin-bottom: 40px;
+    width: 250px; /* Slimmer, lower-left focus */
+  }
+
+  .toc-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .toc-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 9pt;
+  }
+
+  .toc-item .label {
+    font-weight: 400;
+  }
+
+  .toc-item .page-num {
+    font-style: italic;
+    color: #888;
+  }
+
+</style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-left">
+      <h1>Supporting Documents</h1>
+      <div class="subtitle">Deniz Ülker | Data & Process Engineering Specialist</div>
+    </div>
+    <div class="header-right">
+      June 1, 2026
+    </div>
+  </div>
+
+  <div class="toc-container">
+    <ul class="toc-list">
+      <li class="toc-item"><span class="label">I. Cover Letter</span> <span class="page-num">2</span></li>
+      <li class="toc-item"><span class="label">II. References</span> <span class="page-num">3</span></li>
+      <li class="toc-item"><span class="label">III. Language Certifications</span> <span class="page-num">6</span></li>
+      <li class="toc-item"><span class="label">IV. Professional Certifications</span> <span class="page-num">8</span></li>
+      <li class="toc-item"><span class="label">V. Academic Certifications</span> <span class="page-num">12</span></li>
+    </ul>
+  </div>
+</body>
+</html>
