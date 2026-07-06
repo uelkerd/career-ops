@@ -37,6 +37,7 @@ MAX_RETRIES=2
 MIN_SCORE=0
 MODEL=""  # empty = let claude -p use the Claude Max default
 RATE_LIMIT_SLEEP=300
+AGENT_CMD="${AGENT_CMD:-claude -p --dangerously-skip-permissions --strict-mcp-config}"
 BATCH_PAUSED=false
 STATUS_ONLY=false
 WATCH_MODE=false
@@ -158,8 +159,10 @@ check_prerequisites() {
     exit 1
   fi
 
-  if ! command -v agy &>/dev/null; then
-    echo "ERROR: 'agy' CLI not found in PATH."
+  local bin_name
+  bin_name=$(echo "$AGENT_CMD" | awk '{print $1}')
+  if ! command -v "$bin_name" &>/dev/null; then
+    echo "ERROR: '$bin_name' CLI not found in PATH. Ensure AGENT_CMD is set correctly."
     exit 1
   fi
 
@@ -425,25 +428,20 @@ process_offer() {
     fi
   done
 
-  # Launch claude -p worker.
-  # Model defaults to the Claude Max subscription default unless --model was
-  # passed. Building the command in an array keeps quoting safe regardless.
-  # --strict-mcp-config (with no --mcp-config) starts workers with no MCP
-  # servers: they only evaluate offers and need none. Without it each parallel
-  # worker inherits the parent session's MCP (e.g. Playwright) and they deadlock
-  # fighting over the single shared browser when --parallel > 1 (issue #506).
+  # Launch worker via AGENT_CMD.
+  # Model defaults to the CLI's default unless --model was passed.
   local combined_prompt=$(cat "$resolved_prompt" && echo "" && echo "$prompt")
-  local -a claude_args=(-p --dangerously-skip-permissions)
+  local -a agent_args=()
   if [[ -n "$MODEL" ]]; then
-    claude_args+=(--model "$MODEL")
+    agent_args+=(--model "$MODEL")
   fi
-  claude_args+=("$combined_prompt")
+  agent_args+=("$combined_prompt")
 
   local exit_code=0
   local terminal_failure_recorded=false
   while true; do
     exit_code=0
-    agy "${claude_args[@]}" > "$log_file" 2>&1 || exit_code=$?
+    $AGENT_CMD "${agent_args[@]}" > "$log_file" 2>&1 || exit_code=$?
 
     if [[ $exit_code -eq 0 ]]; then
       break
