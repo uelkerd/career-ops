@@ -115,6 +115,11 @@ if ! [[ "$RATE_LIMIT_SLEEP" =~ ^[0-9]+$ ]]; then
   exit 1
 fi
 
+if ! [[ "$MIN_SCORE" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
+  echo "ERROR: --min-score must be a non-negative number."
+  exit 1
+fi
+
 # Lock file to prevent double execution
 acquire_lock() {
   if [[ -f "$LOCK_FILE" ]]; then
@@ -371,7 +376,8 @@ process_offer() {
   report_num=$(reserve_report_num "$id" "$url" "$started_at" "$retries")
   local date
   date=$(date +%Y-%m-%d)
-  local jd_file="/tmp/batch-jd-${id}.txt"
+  local jd_file
+  jd_file="$(mktemp "${TMPDIR:-/tmp}/batch-jd-${id}.XXXXXX")"
 
   echo "--- Processing offer #$id: $url (report $report_num, attempt $((retries + 1)))"
 
@@ -485,8 +491,8 @@ process_offer() {
     fi
 
     # Check min-score gate
-    if [[ "$score" != "-" && -n "$score" ]] && awk "BEGIN{exit !($MIN_SCORE > 0)}"; then
-      if awk "BEGIN{exit !($score < $MIN_SCORE)}"; then
+    if [[ "$score" =~ ^[0-9]+([.][0-9]+)?$ ]] && awk -v min="$MIN_SCORE" 'BEGIN{exit !(min > 0)}'; then
+      if awk -v score="$score" -v min="$MIN_SCORE" 'BEGIN{exit !(score < min)}'; then
         update_state "$id" "$url" "skipped" "$started_at" "$completed_at" "$report_num" "$score" "below-min-score" "$retries"
         echo "    ⏭️  Skipped (score: $score < min-score: $MIN_SCORE)"
         return 0
@@ -537,8 +543,8 @@ print_summary() {
     total=$((total + 1))
     case "$sstatus" in
       completed) completed=$((completed + 1))
-        if [[ "$sscore" != "-" && -n "$sscore" ]]; then
-          score_sum=$(awk "BEGIN{print $score_sum + $sscore}" 2>/dev/null || echo "$score_sum")
+        if [[ "$sscore" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
+          score_sum=$(awk -v sum="$score_sum" -v score="$sscore" 'BEGIN{print sum + score}' 2>/dev/null || echo "$score_sum")
           score_count=$((score_count + 1))
         fi
         ;;
@@ -582,7 +588,7 @@ print_status_table() {
     case "$sstatus" in
       completed)
         completed=$((completed + 1))
-        if [[ "$sscore" != "-" && -n "$sscore" ]]; then
+        if [[ "$sscore" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
           score_sum=$(echo "$score_sum + $sscore" | bc 2>/dev/null || echo "$score_sum")
           score_count=$((score_count + 1))
         fi
@@ -600,7 +606,7 @@ print_status_table() {
   echo "Total: $total | Completed: $completed | Processing: $processing | Failed: $failed | Pending: $pending | Skipped: $skipped | Rate Limited: $rate_limited | Paused: $paused_rate_limit"
   if (( score_count > 0 )); then
     local avg
-    avg=$(echo "scale=1; $score_sum / $score_count" | bc 2>/dev/null || echo "N/A")
+    avg=$(awk -v sum="$score_sum" -v count="$score_count" 'BEGIN{printf "%.1f", sum / count}' 2>/dev/null || echo "N/A")
     echo "Average score: $avg/5 ($score_count scored)"
   fi
   echo ""
