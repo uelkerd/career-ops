@@ -556,7 +556,7 @@ print_summary() {
 
   if (( score_count > 0 )); then
     local avg
-    avg=$(awk "BEGIN{printf \"%.1f\", $score_sum / $score_count}" 2>/dev/null || echo "N/A")
+    avg=$(awk -v sum="$score_sum" -v count="$score_count" 'BEGIN{printf "%.1f", sum / count}' 2>/dev/null || echo "N/A")
     echo "Average score: $avg/5 ($score_count scored)"
   fi
 }
@@ -587,7 +587,7 @@ print_status_table() {
       completed)
         completed=$((completed + 1))
         if [[ "$sscore" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
-          score_sum=$(echo "$score_sum + $sscore" | bc 2>/dev/null || echo "$score_sum")
+          score_sum=$(awk -v sum="$score_sum" -v score="$sscore" 'BEGIN{print sum + score}' 2>/dev/null || echo "$score_sum")
           score_count=$((score_count + 1))
         fi
         ;;
