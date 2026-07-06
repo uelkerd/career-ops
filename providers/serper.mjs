@@ -60,7 +60,8 @@ export default {
         title: r.title,
         url: r.link,
         company: entry.name || 'Organic Result',
-        location: r.snippet || '',
+        location: '',
+        description: r.snippet || '',
       }));
   },
 };
