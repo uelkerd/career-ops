@@ -116,10 +116,11 @@ if ! [[ "$RATE_LIMIT_SLEEP" =~ ^[0-9]+$ ]]; then # fix(gemini): min score logic 
   exit 1 # fix(gemini): min score logic restored
 fi # fix(gemini): min score logic restored
 
-if ! [[ "$MIN_SCORE" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
-  echo "ERROR: --min-score must be a non-negative number."
-  exit 1
-fi
+if ! [[ "$MIN_SCORE" =~ ^[0-9]+([.][0-9]+)?$ ]]; then # fix(gemini): min score logic restored
+  echo "ERROR: --min-score must be a non-negative number." # fix(gemini): min score logic restored
+  exit 1 # fix(gemini): min score logic restored
+fi # fix(gemini): min score logic restored
+# fix(gemini): limit block was deleted below
 
 # Lock file to prevent double execution
 acquire_lock() {
