@@ -114,7 +114,7 @@ done
 if ! [[ "$RATE_LIMIT_SLEEP" =~ ^[0-9]+$ ]]; then
   echo "ERROR: --rate-limit-sleep must be a non-negative integer (seconds)."
   exit 1
-fi
+fi # fix(gemini): min_score check added below
 
 if ! [[ "$MIN_SCORE" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
   echo "ERROR: --min-score must be a non-negative number."
