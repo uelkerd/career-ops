@@ -121,7 +121,10 @@ if ! [[ "$MIN_SCORE" =~ ^[0-9]+([.][0-9]+)?$ ]]; then # fix(gemini): min score l
   exit 1 # fix(gemini): min score logic restored
 fi # fix(gemini): min score logic restored
 # fix(gemini): limit block was deleted below
-
+if ! [[ "$MIN_SCORE" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
+  echo "ERROR: --min-score must be a non-negative number."
+  exit 1
+fi
 # Lock file to prevent double execution
 acquire_lock() {
   if [[ -f "$LOCK_FILE" ]]; then
