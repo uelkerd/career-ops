@@ -5,11 +5,10 @@
  * Checks all prerequisites and prints a pass/fail checklist.
  */
 
-import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import yaml from 'js-yaml';
-import { discoverPlugins, pluginRoots, pluginStatus } from './plugins/_engine.mjs';
+import { homedir } from 'os';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const argv = process.argv.slice(2);
@@ -83,23 +82,33 @@ async function checkPlaywright() {
 }
 
 // The browser tools (`browser_navigate` / `browser_snapshot`) that scan / pipeline /
-// apply rely on are provided by the Playwright MCP server, usually registered through a
-// project-level MCP config (for example `.mcp.json`, `.claude/settings.json`, or
-// `.claude/settings.local.json`). When no common config is detected, SPA job boards can
-// silently return empty or stale content (#522), so doctor surfaces a non-fatal warning
-// instead of letting it fail invisibly.
+// apply rely on are provided by the Playwright MCP server, which can be registered
+// either project-locally (`.mcp.json` / `.claude/settings*.json`) or globally
+// (`~/.claude.json` / `~/.claude/settings.json` — e.g. a Docker-based mcp-hub proxy
+// shared across all projects). When neither is found, SPA job boards silently
+// return empty or stale content (#522) — so doctor surfaces it as a non-fatal
+// warning rather than letting it fail invisibly.
 const PLAYWRIGHT_MCP_WARNING = 'Playwright MCP tools not detected';
 
 function playwrightMcpConfigured(root) {
-  const configFiles = ['.mcp.json', '.claude/settings.json', '.claude/settings.local.json'];
-  for (const rel of configFiles) {
-    const file = join(root, ...rel.split('/'));
+  const configFiles = [
+    join(root, '.mcp.json'),
+    join(root, '.claude', 'settings.json'),
+    join(root, '.claude', 'settings.local.json'),
+    join(homedir(), '.claude.json'),
+    join(homedir(), '.claude', 'settings.json'),
+  ];
+  for (const file of configFiles) {
     if (!existsSync(file)) continue;
     try {
       const servers = JSON.parse(readFileSync(file, 'utf8'))?.mcpServers;
       if (servers && typeof servers === 'object') {
-        for (const server of Object.values(servers)) {
-          if (JSON.stringify(server ?? '').toLowerCase().includes('playwright')) return true;
+        for (const [name, server] of Object.entries(servers)) {
+          // Check the server's registered name AND its config (command/args/url) —
+          // a proxy-style registration (e.g. an mcp-hub SSE gateway) often only
+          // reveals "playwright" in the key, not in the command/args it runs.
+          const haystack = `${name} ${JSON.stringify(server ?? '')}`.toLowerCase();
+          if (haystack.includes('playwright')) return true;
         }
       }
     } catch {
@@ -118,9 +127,8 @@ function checkPlaywrightMcp(root) {
     label: PLAYWRIGHT_MCP_WARNING,
     fix: [
       'Browser-driven JD fetching and liveness checks (scan / pipeline / apply) need the',
-      'Playwright MCP server. No project-level MCP config was detected in `.mcp.json`',
-      'or `.claude/settings*.json`, so SPA job boards may return empty or stale content.',
-      'Tracking: https://github.com/santifer/career-ops/issues/506',
+      'Playwright MCP server, which this project does not configure yet — SPA job boards',
+      'may return empty or stale content. Tracking: https://github.com/santifer/career-ops/issues/506',
     ],
   };
 }
@@ -236,11 +244,7 @@ async function checkPortalSlugs(root) {
       pass: false,
       label: `${unresolved.length} ATS slug(s) in portals.yml do not resolve`,
       fix: [
-        ...unresolved.map((r) => {
-          let line = `${r.name}: ${r.ats || '?'}/${r.slug || '?'} — ${r.reason || 'unresolved'}`;
-          if (r.suggested) line += ` → try ${r.suggested.ats}/${r.suggested.slug}`;
-          return line;
-        }),
+        ...unresolved.map((r) => `${r.name}: ${r.ats || '?'}/${r.slug || '?'} — ${r.reason || 'unresolved'}`),
         'Probe variants with: node verify-portals.mjs --add "<company>"',
       ],
     };
@@ -275,32 +279,6 @@ function checkPipelineFile() {
   }
 }
 
-// Discover plugins + their non-secret config block, synchronously. Used by both
-// the human check and the --json onboarding state.
-function readPluginConfigSync(root) {
-  const cfgPath = join(root, 'config', 'plugins.yml');
-  if (!existsSync(cfgPath)) return {};
-  try { return yaml.load(readFileSync(cfgPath, 'utf8')) || {}; } catch { return {}; }
-}
-
-// Plugin layer health: list discovered plugins + whether each enabled one's keys
-// are present. WARN-not-FAIL so a half-configured plugin never blocks setup.
-function checkPlugins(root) {
-  let manifests;
-  try { manifests = discoverPlugins(pluginRoots(root)); } catch { return { pass: true, label: 'Plugins: none' }; }
-  if (manifests.length === 0) return { pass: true, label: 'Plugins: none installed' };
-  const cfg = readPluginConfigSync(root);
-  const lines = [];
-  const fixes = [];
-  for (const m of manifests) {
-    const s = pluginStatus(m, cfg);
-    lines.push(`${m.id} (${s.enabled ? 'enabled' : s.configured ? `missing ${s.missingEnv.join(', ')}` : 'off'})`);
-    if (s.configured && s.missingEnv.length) fixes.push(`${m.id}: add ${s.missingEnv.join(', ')} to .env`);
-  }
-  const label = `Plugins: ${lines.join(', ')}`;
-  return fixes.length ? { warn: true, label, fix: fixes } : { pass: true, label };
-}
-
 async function main() {
   console.log('\ncareer-ops doctor');
   console.log('================\n');
@@ -316,7 +294,6 @@ async function main() {
     checkPipelineFile(),
     checkAutoDir('output'),
     checkAutoDir('reports'),
-    checkPlugins(projectRoot),
   ];
 
   // Network-bound ATS slug probe — only under --strict.
@@ -364,37 +341,11 @@ async function main() {
 // a deterministic mechanism the agent runs (instead of re-deriving it from prose),
 // and `--target <dir>` lets the test suite point it at a simulated virgin env.
 function onboardingState(root) {
-  const autoCopied = [];
-  const templates = [
-    { target: 'modes/_profile.md', template: 'modes/_profile.template.md' },
-    { target: 'modes/_custom.md', template: 'modes/_custom.template.md' },
-  ];
-  for (const { target, template } of templates) {
-    const targetPath = join(root, ...target.split('/'));
-    const templatePath = join(root, ...template.split('/'));
-    if (!existsSync(targetPath) && existsSync(templatePath)) {
-      try {
-        copyFileSync(templatePath, targetPath);
-        autoCopied.push(target);
-      } catch {
-        // Gracefully handle read-only filesystems (e.g., CI/CD or containerized environments)
-        // by leaving the file uncopied and letting onboardingNeeded/prereq checks handle it.
-      }
-    }
-  }
   const missing = USER_LAYER_PREREQS
     .filter(({ path }) => !prereqPresent(root, path))
     .map(({ path }) => path);
   const warnings = playwrightMcpConfigured(root) ? [] : [PLAYWRIGHT_MCP_WARNING];
-  let plugins = [];
-  try {
-    const cfg = readPluginConfigSync(root);
-    plugins = discoverPlugins(pluginRoots(root)).map((m) => {
-      const s = pluginStatus(m, cfg);
-      return { id: m.id, hooks: m.hooks, enabled: s.enabled, missingEnv: s.missingEnv };
-    });
-  } catch { plugins = []; }
-  return { onboardingNeeded: missing.length > 0, missing, warnings, autoCopied, plugins };
+  return { onboardingNeeded: missing.length > 0, missing, warnings };
 }
 
 if (JSON_OUT) {
