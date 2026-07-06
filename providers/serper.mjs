@@ -50,12 +50,17 @@ export default {
       body: JSON.stringify({ q: query }),
     });
 
-    const results = Array.isArray(json?.organic) ? json.organic : [];
-    return results.map(r => ({
-      title: r.title || '',
-      url: r.link || '',
-      company: entry.name || 'Organic Result',
-      location: r.snippet || '',
-    }));
+    if (!json?.organic || !Array.isArray(json.organic)) {
+      throw new Error(`serper: unexpected API response shape (missing 'organic' array). Response keys: ${Object.keys(json || {}).join(',')}`);
+    }
+
+    return json.organic
+      .filter(r => r.link && r.title)
+      .map(r => ({
+        title: r.title,
+        url: r.link,
+        company: entry.name || 'Organic Result',
+        location: r.snippet || '',
+      }));
   },
 };
