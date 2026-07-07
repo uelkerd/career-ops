@@ -189,6 +189,9 @@ func (c *Catalog) StatusLabel(norm string) string {
 	}
 }
 
+// NowFunc allows injecting a mock clock for testing.
+var NowFunc = time.Now
+
 // FormatTimeAgo renders an ISO date as a relative duration in calendar days using localized strings:
 // "today", "yesterday", or "Nd ago" (or Turkish equivalents).
 func (c *Catalog) FormatTimeAgo(dateStr string) string {
@@ -196,7 +199,7 @@ func (c *Catalog) FormatTimeAgo(dateStr string) string {
 	if err != nil {
 		return dateStr
 	}
-	now := time.Now()
+	now := NowFunc()
 	today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.Local)
 	contactDay := time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, time.Local)
 	days := int(math.Round(today.Sub(contactDay).Hours() / 24))
@@ -335,7 +338,7 @@ var En = Catalog{
 // Tr is the static Turkish translation catalog.
 var Tr = Catalog{
 	// Screen banners & general
-	AppTitle:       "KARİYER PIPELINE",
+	AppTitle:       "KARİYER HATTI",
 	OffersSummary:  "%d ilan | Ort %s/5",
 	NoOffersMatch:  "Bu filtreye uyan ilan yok",
 	LoadingPreview: "Önizleme yükleniyor...",

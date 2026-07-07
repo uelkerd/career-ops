@@ -327,6 +327,15 @@ func TestNormalizeStatus(t *testing.T) {
 		{"uygun_değil", "skip"},
 		{"UYGUN DEĞİL", "skip"},
 
+		// No-diacritic variants
+		{"degerlendirildi", "evaluated"},
+		{"DEGERLENDIRILDI", "evaluated"},
+		{"basvuruldu", "applied"},
+		{"BASVURULDU", "applied"},
+		{"yanit verildi", "responded"},
+		{"mulakat", "interview"},
+		{"uygun degil", "skip"},
+
 		// English status strings
 		{"Evaluated", "evaluated"},
 		{"Applied", "applied"},
@@ -339,8 +348,10 @@ func TestNormalizeStatus(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		if got := NormalizeStatus(tt.input); got != tt.want {
-			t.Errorf("NormalizeStatus(%q) = %q; want %q", tt.input, got, tt.want)
-		}
+		t.Run(tt.input, func(t *testing.T) {
+			if got := NormalizeStatus(tt.input); got != tt.want {
+				t.Errorf("NormalizeStatus(%q) = %q; want %q", tt.input, got, tt.want)
+			}
+		})
 	}
 }
