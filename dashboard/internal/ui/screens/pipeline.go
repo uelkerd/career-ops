@@ -1,4 +1,4 @@
-﻿package screens
+package screens
 
 import (
 	"fmt"
@@ -13,6 +13,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 
 	"github.com/santifer/career-ops/dashboard/internal/data"
+	"github.com/santifer/career-ops/dashboard/internal/i18n"
 	"github.com/santifer/career-ops/dashboard/internal/model"
 	"github.com/santifer/career-ops/dashboard/internal/theme"
 )
@@ -112,14 +113,14 @@ type pipelineTab struct {
 }
 
 var pipelineTabs = []pipelineTab{
-	{filterAll, "ALL"},
-	{filterEvaluated, "EVALUATED"},
-	{filterApplied, "APPLIED"},
-	{filterInterview, "INTERVIEW"},
-	{filterTop, "TOP ≥4"},
-	{filterSkip, "SKIP"},
-	{filterRejected, "REJECTED"},
-	{filterDiscarded, "DISCARDED"},
+	{filterAll, i18n.Current.TabAll},
+	{filterEvaluated, i18n.Current.TabEvaluated},
+	{filterApplied, i18n.Current.TabApplied},
+	{filterInterview, i18n.Current.TabInterview},
+	{filterTop, i18n.Current.TabTop},
+	{filterSkip, i18n.Current.TabSkip},
+	{filterRejected, i18n.Current.TabRejected},
+	{filterDiscarded, i18n.Current.TabDiscarded},
 }
 
 var sortCycle = []string{sortScore, sortDate, sortCompany, sortStatus, sortLocation, sortPay, sortLast}
@@ -139,23 +140,23 @@ const (
 
 // colDef describes one optional column for the picker UI.
 type colDef struct {
-	id     ColumnID
-	header string
-	hint   string
-	width  int
+	id          ColumnID
+	header      string
+	hint        string
+	width       int
 	onByDefault bool
 }
 
 var optionalCols = []colDef{
-	{ColDate, "APPLIED", "", 10, true},
-	{ColLocation, "LOCATION", "", 20, true},
-	{ColPay, "PAY", "", 16, true},
-	{ColHasReport, "RPT", "✓/—", 4, false},
-	{ColHasPDF, "PDF", "✓/—", 4, false},
-	{ColLastContact, "LAST", "", 10, false},
+	{ColDate, i18n.Current.TabApplied, "", 10, true},
+	{ColLocation, i18n.Current.ColLocation, "", 20, true},
+	{ColPay, i18n.Current.ColPay, "", 16, true},
+	{ColHasReport, i18n.Current.ColReport, "✓/—", 4, false},
+	{ColHasPDF, i18n.Current.ColPDF, "✓/—", 4, false},
+	{ColLastContact, i18n.Current.ColLast, "", 10, false},
 }
 
-var statusOptions = []string{"Evaluated", "Applied", "Responded", "Interview", "Offer", "Rejected", "Discarded", "SKIP"}
+var statusOptions = []string{i18n.Current.StatusEvaluated, i18n.Current.StatusApplied, i18n.Current.StatusResponded, i18n.Current.StatusInterview, i18n.Current.StatusOffer, i18n.Current.StatusRejected, i18n.Current.StatusDiscarded, i18n.Current.TabSkip}
 
 // statusGroupOrder defines display order for grouped view.
 var statusGroupOrder = []string{"interview", "offer", "responded", "applied", "evaluated", "skip", "rejected", "discarded"}
@@ -169,7 +170,7 @@ type PipelineModel struct {
 	scrollOffset  int
 	sortMode      string
 	activeTab     int
-	viewMode      string // "grouped" or "flat"
+	viewMode      string // i18n.Current.ViewGrouped or i18n.Current.ViewFlat
 	width, height int
 	theme         theme.Theme
 	careerOpsPath string
@@ -205,7 +206,7 @@ func NewPipelineModel(t theme.Theme, apps []model.CareerApplication, metrics mod
 		metrics:       metrics,
 		sortMode:      sortScore,
 		activeTab:     0,
-		viewMode:      "grouped",
+		viewMode:      i18n.Current.ViewGrouped,
 		width:         width,
 		height:        height,
 		theme:         t,
@@ -707,7 +708,6 @@ func (m PipelineModel) openPDFCmd(relPath string) tea.Cmd {
 	}
 }
 
-
 func (m PipelineModel) loadCurrentReport() tea.Cmd {
 	app, ok := m.CurrentApp()
 	if !ok || app.ReportPath == "" {
@@ -774,7 +774,7 @@ func (m *PipelineModel) applyFilterAndSort() {
 	})
 
 	// In grouped mode, always sort by status priority first, then by selected sort within groups
-	if m.viewMode == "grouped" {
+	if m.viewMode == i18n.Current.ViewGrouped {
 		sort.SliceStable(filtered, func(i, j int) bool {
 			pi := data.StatusPriority(filtered[i].Status)
 			pj := data.StatusPriority(filtered[j].Status)
@@ -826,13 +826,13 @@ func (m PipelineModel) sortLess() func(a, b model.CareerApplication) bool {
 // workModeRank orders work modes remote-first for the location sort.
 func workModeRank(mode string) int {
 	switch mode {
-	case "Remote":
+	case i18n.Current.ModeRemote:
 		return 0
-	case "RemoteFlex":
+	case i18n.Current.ModeRemoteFlex:
 		return 1
-	case "Hybrid":
+	case i18n.Current.ModeHybrid:
 		return 2
-	case "Full":
+	case i18n.Current.ModeFull:
 		return 3
 	default:
 		return 4
@@ -876,7 +876,7 @@ func (m *PipelineModel) adjustScroll() {
 }
 
 func (m PipelineModel) cursorLineEstimate() int {
-	if m.viewMode != "grouped" {
+	if m.viewMode != i18n.Current.ViewGrouped {
 		return m.cursor
 	}
 	// Account for group headers
@@ -972,13 +972,13 @@ func (m PipelineModel) renderSearchBar() string {
 	}
 
 	tabFiltered := m.countForFilter(pipelineTabs[m.activeTab].filter)
-	matchInfo := hintStyle.Render(fmt.Sprintf("  %d/%d matching", len(m.filtered), tabFiltered))
+	matchInfo := hintStyle.Render(fmt.Sprintf(i18n.Current.SearchMatching, len(m.filtered), tabFiltered))
 
 	hint := ""
 	if m.searchInput {
-		hint = hintStyle.Render("   Enter: keep   Esc: cancel   Ctrl+U: clear")
+		hint = hintStyle.Render(i18n.Current.SearchHintInput)
 	} else {
-		hint = hintStyle.Render("   Esc: clear   /: edit")
+		hint = hintStyle.Render(i18n.Current.SearchHintNormal)
 	}
 
 	return style.Render(prompt + " " + display + matchInfo + hint)
@@ -994,9 +994,9 @@ func (m PipelineModel) renderHeader() string {
 
 	right := lipgloss.NewStyle().Foreground(m.theme.Subtext)
 	avg := fmt.Sprintf("%.1f", m.metrics.AvgScore)
-	info := right.Render(fmt.Sprintf("%d offers | Avg %s/5", m.metrics.Total, avg))
+	info := right.Render(fmt.Sprintf(i18n.Current.OffersSummary, m.metrics.Total, avg))
 
-	title := lipgloss.NewStyle().Bold(true).Foreground(m.theme.Blue).Render("CAREER PIPELINE")
+	title := lipgloss.NewStyle().Bold(true).Foreground(m.theme.Blue).Render(i18n.Current.AppTitle)
 	gap := m.width - lipgloss.Width(title) - lipgloss.Width(info) - 4
 	if gap < 1 {
 		gap = 1
@@ -1085,9 +1085,9 @@ func (m PipelineModel) renderSortBar() string {
 		Width(m.width).
 		Padding(0, 2)
 
-	sortLabel := fmt.Sprintf("[Sort: %s]", m.sortMode)
-	viewLabel := fmt.Sprintf("[View: %s]", m.viewMode)
-	count := fmt.Sprintf("%d shown", len(m.filtered))
+	sortLabel := fmt.Sprintf(i18n.Current.SortLabel, i18n.Current.SortModeLabel(m.sortMode))
+	viewLabel := fmt.Sprintf(i18n.Current.ViewLabel, i18n.Current.ViewModeLabel(m.viewMode))
+	count := fmt.Sprintf(i18n.Current.ShownCount, len(m.filtered))
 
 	return style.Render(fmt.Sprintf("%s  %s  %s", sortLabel, viewLabel, count))
 }
@@ -1097,7 +1097,7 @@ func (m PipelineModel) renderBody() string {
 		emptyStyle := lipgloss.NewStyle().
 			Foreground(m.theme.Subtext).
 			Padding(1, 2)
-		return emptyStyle.Render("No offers match this filter")
+		return emptyStyle.Render(i18n.Current.NoOffersMatch)
 	}
 
 	var lines []string
@@ -1108,7 +1108,7 @@ func (m PipelineModel) renderBody() string {
 		norm := data.NormalizeStatus(app.Status)
 
 		// Group header in grouped mode
-		if m.viewMode == "grouped" && norm != prevStatus {
+		if m.viewMode == i18n.Current.ViewGrouped && norm != prevStatus {
 			count := m.countByNormStatus(norm)
 			headerStyle := lipgloss.NewStyle().
 				Bold(true).
@@ -1179,13 +1179,13 @@ func (m PipelineModel) columnWidths() colWidths {
 
 func (m PipelineModel) workModeColor(mode string) lipgloss.Color {
 	switch mode {
-	case "Remote":
+	case i18n.Current.ModeRemote:
 		return m.theme.Green
-	case "RemoteFlex":
+	case i18n.Current.ModeRemoteFlex:
 		return m.theme.Sky
-	case "Hybrid":
+	case i18n.Current.ModeHybrid:
 		return m.theme.Yellow
-	case "Full":
+	case i18n.Current.ModeFull:
 		return m.theme.Red
 	default:
 		return m.theme.Subtext
@@ -1247,28 +1247,28 @@ func (m PipelineModel) renderColumnHeader() string {
 
 	segments := []string{
 		cell("#", cw.num),
-		h.Render("FIT"), // score cell is unpadded, always 3 runes wide
+		h.Render(i18n.Current.ColFit), // score cell is unpadded, always 3 runes wide
 	}
 	if cw.date > 0 {
-		segments = append(segments, cell("APPLIED", cw.date))
+		segments = append(segments, cell(i18n.Current.TabApplied, cw.date))
 	}
-	segments = append(segments, cell("COMPANY", cw.company))
-	segments = append(segments, cell("ROLE", cw.role))
-	segments = append(segments, cell("STATUS", cw.status))
+	segments = append(segments, cell(i18n.Current.ColCompany, cw.company))
+	segments = append(segments, cell(i18n.Current.ColRole, cw.role))
+	segments = append(segments, cell(i18n.Current.ColStatus, cw.status))
 	if cw.loc > 0 {
-		segments = append(segments, cell("LOCATION", cw.loc))
+		segments = append(segments, cell(i18n.Current.ColLocation, cw.loc))
 	}
 	if cw.pay > 0 {
-		segments = append(segments, cell("PAY", cw.pay))
+		segments = append(segments, cell(i18n.Current.ColPay, cw.pay))
 	}
 	if cw.rpt > 0 {
-		segments = append(segments, cell("RPT", cw.rpt))
+		segments = append(segments, cell(i18n.Current.ColReport, cw.rpt))
 	}
 	if cw.pdf > 0 {
-		segments = append(segments, cell("PDF", cw.pdf))
+		segments = append(segments, cell(i18n.Current.ColPDF, cw.pdf))
 	}
 	if cw.last > 0 {
-		segments = append(segments, cell("LAST", cw.last))
+		segments = append(segments, cell(i18n.Current.ColLast, cw.last))
 	}
 
 	padStyle := lipgloss.NewStyle().Padding(0, 2)
@@ -1385,17 +1385,17 @@ func (m PipelineModel) renderPreview() string {
 				loc = app.Location
 			}
 		}
-		facts = append(facts, labelStyle.Render("Loc: ")+valueStyle.Render(loc))
+		facts = append(facts, labelStyle.Render(i18n.Current.LabelLoc)+valueStyle.Render(loc))
 	}
 	if app.PayRange != "" {
 		pay := app.PayRange
 		if app.PaySource != "" {
 			pay += " (" + app.PaySource + ")"
 		}
-		facts = append(facts, labelStyle.Render("Pay: ")+valueStyle.Render(pay))
+		facts = append(facts, labelStyle.Render(i18n.Current.LabelPay)+valueStyle.Render(pay))
 	}
 	if app.LastContact != "" {
-		facts = append(facts, labelStyle.Render("Last contact: ")+
+		facts = append(facts, labelStyle.Render(i18n.Current.LabelLast)+
 			valueStyle.Render(fmt.Sprintf("%s (%s)", app.LastContact, formatTimeAgo(app.LastContact))))
 	}
 	if len(facts) > 0 {
@@ -1420,24 +1420,24 @@ func (m PipelineModel) renderPreview() string {
 		}
 		if summary.remote != "" {
 			lines = append(lines, padStyle.Render(
-				labelStyle.Render("Remote: ")+valueStyle.Render(summary.remote)))
+				labelStyle.Render(i18n.Current.LabelRemote)+valueStyle.Render(summary.remote)))
 		}
 	} else if app.Notes != "" && outcome == "" {
 		// Fallback: show notes (the outcome line below already carries them)
 		notes := truncateRunes(app.Notes, m.width-10)
 		lines = append(lines, padStyle.Render(dimStyle.Render(notes)))
 	} else if outcome == "" {
-		lines = append(lines, padStyle.Render(dimStyle.Render("Loading preview...")))
+		lines = append(lines, padStyle.Render(dimStyle.Render(i18n.Current.LoadingPreview)))
 	}
 
 	// Closed-out postings: surface what happened as the last preview line.
 	// The notes-only fallback above disappears once a report summary is
 	// cached, which is exactly when the discard reason got lost (#787).
 	if outcome != "" {
-		// Width budget: 4 cols padding + 9 for the "Outcome: " label + slack,
+		// Width budget: 4 cols padding + 9 for the i18n.Current.LabelOutcome label + slack,
 		// mirroring the m.width-10 budget of the notes fallback above.
 		lines = append(lines, padStyle.Render(
-			labelStyle.Render("Outcome: ")+valueStyle.Render(truncateRunes(outcome, m.width-14))))
+			labelStyle.Render(i18n.Current.LabelOutcome)+valueStyle.Render(truncateRunes(outcome, m.width-14))))
 	}
 
 	return strings.Join(lines, "\n")
@@ -1480,42 +1480,42 @@ func (m PipelineModel) renderHelp() string {
 
 	if m.colPicker {
 		return style.Render(
-			keyStyle.Render("↑↓/jk") + descStyle.Render(" navigate  ") +
-				keyStyle.Render("SPACE") + descStyle.Render(" toggle  ") +
-				keyStyle.Render("Esc/C") + descStyle.Render(" close"))
+			keyStyle.Render("↑↓/jk") + descStyle.Render(i18n.Current.HelpNavigate) +
+				keyStyle.Render("SPACE") + descStyle.Render(i18n.Current.HelpToggle) +
+				keyStyle.Render("Esc/C") + descStyle.Render(i18n.Current.HelpClose))
 	}
 
 	if m.statusPicker || m.pdfPicker {
 		return style.Render(
-			keyStyle.Render("↑↓/jk") + descStyle.Render(" navigate  ") +
-				keyStyle.Render("Enter") + descStyle.Render(" confirm  ") +
-				keyStyle.Render("Esc") + descStyle.Render(" cancel"))
+			keyStyle.Render("↑↓/jk") + descStyle.Render(i18n.Current.HelpNavigate) +
+				keyStyle.Render("Enter") + descStyle.Render(i18n.Current.HelpConfirm) +
+				keyStyle.Render("Esc") + descStyle.Render(i18n.Current.HelpCancel))
 	}
 
 	if m.searchInput {
 		return style.Render(
-			keyStyle.Render("type") + descStyle.Render(" filter live  ") +
-				keyStyle.Render("Enter") + descStyle.Render(" keep  ") +
-				keyStyle.Render("Ctrl+U") + descStyle.Render(" clear  ") +
-				keyStyle.Render("Esc") + descStyle.Render(" cancel"))
+			keyStyle.Render("type") + descStyle.Render(i18n.Current.HelpFilterLive) +
+				keyStyle.Render("Enter") + descStyle.Render(i18n.Current.HelpKeep) +
+				keyStyle.Render("Ctrl+U") + descStyle.Render(i18n.Current.HelpClear) +
+				keyStyle.Render("Esc") + descStyle.Render(i18n.Current.HelpCancel))
 	}
 
 	brand := lipgloss.NewStyle().Foreground(m.theme.Overlay).Render("career-ops by santifer.io")
 
-	keys := keyStyle.Render("↑↓/jk") + descStyle.Render(" nav  ") +
-		keyStyle.Render("←→/hl") + descStyle.Render(" tabs  ") +
-		keyStyle.Render("/") + descStyle.Render(" search  ") +
-		keyStyle.Render("s") + descStyle.Render(" sort  ") +
-		keyStyle.Render("r") + descStyle.Render(" refresh  ") +
-		keyStyle.Render("Enter") + descStyle.Render(" report  ") +
-		keyStyle.Render("o") + descStyle.Render(" open URL  ") +
+	keys := keyStyle.Render("↑↓/jk") + descStyle.Render(i18n.Current.HelpNav) +
+		keyStyle.Render("←→/hl") + descStyle.Render(i18n.Current.HelpTabs) +
+		keyStyle.Render("/") + descStyle.Render(i18n.Current.HelpSearch) +
+		keyStyle.Render("s") + descStyle.Render(i18n.Current.HelpSort) +
+		keyStyle.Render("r") + descStyle.Render(i18n.Current.HelpRefresh) +
+		keyStyle.Render("Enter") + descStyle.Render(i18n.Current.HelpReport) +
+		keyStyle.Render("o") + descStyle.Render(i18n.Current.HelpOpenURL) +
 		keyStyle.Render("d") + descStyle.Render(" open PDF  ") +
 		keyStyle.Render("D") + descStyle.Render(" regen PDF  ") +
-		keyStyle.Render("c") + descStyle.Render(" change  ") +
-		keyStyle.Render("C") + descStyle.Render(" columns  ") +
-		keyStyle.Render("v") + descStyle.Render(" view  ") +
-		keyStyle.Render("p") + descStyle.Render(" progress  ") +
-		keyStyle.Render("q") + descStyle.Render(" quit")
+		keyStyle.Render("c") + descStyle.Render(i18n.Current.HelpChange) +
+		keyStyle.Render("C") + descStyle.Render(i18n.Current.HelpColumns) +
+		keyStyle.Render("v") + descStyle.Render(i18n.Current.HelpView) +
+		keyStyle.Render("p") + descStyle.Render(i18n.Current.HelpProgress) +
+		keyStyle.Render("q") + descStyle.Render(i18n.Current.HelpQuit)
 
 	gap := m.width - lipgloss.Width(keys) - lipgloss.Width(brand) - 2
 	if gap < 1 {
@@ -1536,7 +1536,7 @@ func (m PipelineModel) overlayStatusPicker(body string) string {
 		Bold(true)
 
 	var picker []string
-	picker = append(picker, padStyle.Render(borderStyle.Render("Change status:")))
+	picker = append(picker, padStyle.Render(borderStyle.Render(i18n.Current.PickerChangeStatus)))
 
 	for i, opt := range statusOptions {
 		style := lipgloss.NewStyle().Foreground(m.theme.Text).Width(pickerWidth)
@@ -1600,7 +1600,7 @@ func (m PipelineModel) overlayColPicker(body string) string {
 	dimStyle := lipgloss.NewStyle().Foreground(m.theme.Subtext)
 
 	var picker []string
-	picker = append(picker, padStyle.Render(borderStyle.Render("─── Columns (SPACE toggle · ESC close) ───")))
+	picker = append(picker, padStyle.Render(borderStyle.Render(i18n.Current.PickerColumnsTitle)))
 
 	for i, col := range optionalCols {
 		on := m.visibleCols[col.id]
@@ -1666,7 +1666,7 @@ func (m PipelineModel) countByNormStatus(status string) int {
 }
 
 // formatTimeAgo renders an ISO date as a relative duration in calendar days:
-// "today", "yesterday", or "Nd ago". Tracker dates are day-granular (no
+// i18n.Current.TimeToday, i18n.Current.TimeYesterday, or "Nd ago". Tracker dates are day-granular (no
 // time-of-day), so we never report sub-day hours — doing so would fabricate
 // precision the data doesn't have (e.g. an entry dated today would otherwise
 // read "13h ago" simply because it's 1pm, not because contact was 13h back).
@@ -1682,11 +1682,11 @@ func formatTimeAgo(dateStr string) string {
 	days := int(math.Round(today.Sub(contactDay).Hours() / 24))
 	switch {
 	case days <= 0:
-		return "today"
+		return i18n.Current.TimeToday
 	case days == 1:
-		return "yesterday"
+		return i18n.Current.TimeYesterday
 	default:
-		return fmt.Sprintf("%dd ago", days)
+		return fmt.Sprintf(i18n.Current.TimeDaysAgo, days)
 	}
 }
 
@@ -1705,21 +1705,21 @@ func truncateRunes(s string, maxRunes int) string {
 func statusLabel(norm string) string {
 	switch norm {
 	case "interview":
-		return "Interview"
+		return i18n.Current.StatusInterview
 	case "offer":
-		return "Offer"
+		return i18n.Current.StatusOffer
 	case "responded":
-		return "Responded"
+		return i18n.Current.StatusResponded
 	case "applied":
-		return "Applied"
+		return i18n.Current.StatusApplied
 	case "evaluated":
-		return "Evaluated"
+		return i18n.Current.StatusEvaluated
 	case "skip":
 		return "Skip"
 	case "rejected":
-		return "Rejected"
+		return i18n.Current.StatusRejected
 	case "discarded":
-		return "Discarded"
+		return i18n.Current.StatusDiscarded
 	default:
 		return norm
 	}
