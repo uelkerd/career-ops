@@ -344,4 +344,3 @@ func TestNormalizeStatus(t *testing.T) {
 		}
 	}
 }
-

@@ -12,6 +12,7 @@ import (
 	"github.com/charmbracelet/x/ansi"
 
 	"github.com/santifer/career-ops/dashboard/internal/data"
+	"github.com/santifer/career-ops/dashboard/internal/i18n"
 	"github.com/santifer/career-ops/dashboard/internal/model"
 	"github.com/santifer/career-ops/dashboard/internal/theme"
 )
@@ -721,11 +722,11 @@ func (m ViewerModel) renderFooter() string {
 				keyStyle.Render("Esc/q") + descStyle.Render(" cancel"))
 	}
 
-	footer := keyStyle.Render("↑↓") + descStyle.Render(" scroll  ") +
-		keyStyle.Render("PgUp/Dn") + descStyle.Render(" page  ") +
-		keyStyle.Render("g/G") + descStyle.Render(" top/end  ") +
+	footer := keyStyle.Render("↑↓") + descStyle.Render(i18n.Current.HelpScroll) +
+		keyStyle.Render("PgUp/Dn") + descStyle.Render(i18n.Current.HelpPage) +
+		keyStyle.Render("g/G") + descStyle.Render(i18n.Current.HelpTopEnd) +
 		keyStyle.Render("c") + descStyle.Render(" status  ") +
-		keyStyle.Render("Esc") + descStyle.Render(" back")
+		keyStyle.Render("Esc") + descStyle.Render(i18n.Current.HelpBack)
 
 	if m.coverLetterPath != "" {
 		footer += "  " + keyStyle.Render("L") + descStyle.Render(" cover letter")
