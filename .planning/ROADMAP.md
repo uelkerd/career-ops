@@ -18,4 +18,4 @@
 ## Phase 5: TUI Dashboard Localization [IN PROGRESS]
 - Add Turkish string support to the Go TUI Dashboard.
   - [x] Plan 01: Translation Catalog & Status Normalization
-  - [ ] Plan 02: UI Screen Localization & Keybindings
+  - [x] Plan 02: UI Screen Localization & Keybindings

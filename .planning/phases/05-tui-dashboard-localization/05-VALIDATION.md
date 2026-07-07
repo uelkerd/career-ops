@@ -38,10 +38,10 @@ created: 2026-07-07
 
 | Task ID | Plan | Wave | Requirement | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
-| 05-01-01 | 01 | 1 | N/A (i18n catalog) | unit | `cd dashboard && go test -v ./internal/i18n/...` | ❌ W1 | ⬜ pending |
-| 05-01-02 | 01 | 1 | N/A (data layer) | unit | `cd dashboard && go test -v ./internal/data/...` | ✅ | ⬜ pending |
-| 05-02-01 | 02 | 2 | N/A (UI screens) | unit/integration | `cd dashboard && go test -v ./internal/ui/...` | ✅ | ⬜ pending |
-| 05-02-02 | 02 | 2 | N/A (main wiring) | regression | `cd dashboard && go test -v ./...` | ✅ | ⬜ pending |
+| 05-01-01 | 01 | 1 | N/A (i18n catalog) | unit | `cd dashboard && go test -v ./internal/i18n/...` | ✅ | ✅ green |
+| 05-01-02 | 01 | 1 | N/A (data layer) | unit | `cd dashboard && go test -v ./internal/data/...` | ✅ | ✅ green |
+| 05-02-01 | 02 | 2 | N/A (UI screens) | unit/integration | `cd dashboard && go test -v ./internal/ui/...` | ✅ | ✅ green |
+| 05-02-02 | 02 | 2 | N/A (main wiring) | regression | `cd dashboard && go test -v ./...` | ✅ | ✅ green |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
@@ -72,3 +72,10 @@ created: 2026-07-07
 - [x] `nyquist_compliant: true` set in frontmatter
 
 **Approval:** approved 2026-07-07
+
+## Validation Audit 2026-07-07
+| Metric | Count |
+|--------|-------|
+| Gaps found | 0 |
+| Resolved | 0 |
+| Escalated | 0 |
