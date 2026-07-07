@@ -4688,10 +4688,25 @@ try {
   }
 
   // Known template tokens still resolve, and no unreplaced tokens leak through.
-  if (injected.includes('Jane Doe') && !injected.includes('{{NAME}}') && !injected.includes('{{ROLE_TITLE}}')) {
-    pass('Known template tokens still substitute under single-pass');
+  if (injected.includes('Jane Doe') && !injected.includes('{{NAME}}') && !injected.includes('{{ROLE_TITLE}}') && !injected.includes('{{LANG}}') && !injected.includes('{{COVER_LETTER_LABEL}}')) {
+    pass('Known template tokens (including LANG and COVER_LETTER_LABEL) still substitute under single-pass');
   } else {
     fail('Single-pass substitution left a known token unreplaced');
+  }
+
+  const localized = buildHtml({
+    lang: 'tr',
+    candidate: { name: 'Ali Yılmaz' },
+    letter: {
+      role_title: 'Mühendis',
+      opening: 'Giriş.',
+      profile_intro: 'Tanıtım.',
+    },
+  });
+  if (localized.includes('lang="tr"') && localized.includes('Ön Yazı: Mühendis') && !localized.includes('{{LANG}}') && !localized.includes('{{COVER_LETTER_LABEL}}')) {
+    pass('LANG and COVER_LETTER_LABEL substitute correctly for localized payloads');
+  } else {
+    fail('LANG or COVER_LETTER_LABEL substitution failed');
   }
 } catch (e) {
   fail(`Cover letter single-pass substitution test crashed: ${e.message}`);

@@ -47,13 +47,15 @@ const CANONICAL_STATUSES = [
 
 const ALIASES = {
   'evaluada': 'evaluated', 'condicional': 'evaluated', 'hold': 'evaluated', 'evaluar': 'evaluated', 'verificar': 'evaluated',
+  'değerlendirildi': 'evaluated', 'degerlendirildi': 'evaluated',
   'aplicado': 'applied', 'enviada': 'applied', 'aplicada': 'applied', 'applied': 'applied', 'sent': 'applied',
-  'respondido': 'responded',
-  'entrevista': 'interview',
-  'oferta': 'offer',
-  'rechazado': 'rejected', 'rechazada': 'rejected',
-  'descartado': 'discarded', 'descartada': 'discarded', 'cerrada': 'discarded', 'cancelada': 'discarded',
-  'no aplicar': 'skip', 'no_aplicar': 'skip', 'monitor': 'skip', 'geo blocker': 'skip',
+  'başvuruldu': 'applied', 'basvuruldu': 'applied',
+  'respondido': 'responded', 'yanıt verildi': 'responded', 'yanit verildi': 'responded',
+  'entrevista': 'interview', 'mülakat': 'interview', 'mulakat': 'interview',
+  'oferta': 'offer', 'teklif': 'offer',
+  'rechazado': 'rejected', 'rechazada': 'rejected', 'reddedildi': 'rejected',
+  'descartado': 'discarded', 'descartada': 'discarded', 'cerrada': 'discarded', 'cancelada': 'discarded', 'iptal edildi': 'discarded',
+  'no aplicar': 'skip', 'no_aplicar': 'skip', 'monitor': 'skip', 'geo blocker': 'skip', 'uygun değil': 'skip', 'uygun degil': 'skip', // skip group
 };
 
 let errors = 0;
@@ -123,7 +125,7 @@ console.log(`\n📊 Checking ${entries.length} entries in applications.md\n`);
 // --- Check 1: Canonical statuses ---
 let badStatuses = 0;
 for (const e of entries) {
-  const clean = e.status.replace(/\*\*/g, '').trim().toLowerCase();
+  const clean = e.status.replace(/\*\*/g, '').trim().toLowerCase().replace(/\u0307/g, '');
   // Strip trailing dates
   const statusOnly = clean.replace(/\s+\d{4}-\d{2}-\d{2}.*$/, '').trim();
 
