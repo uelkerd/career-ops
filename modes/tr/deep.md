@@ -3,7 +3,7 @@
 Perplexity/Claude/ChatGPT için 6 eksenli yapılandırılmış bir istem (prompt) oluştur:
 
 ```text
-## Derin Araştırma (Deep Research): [Company] — [Role]
+## Derin Araştırma (Deep Research): [company] — [role]
 
 Bağlam: [company] şirketindeki [role] rolü için bir adaylığı değerlendiriyorum. Mülakat için eyleme dönüştürülebilir bilgilere ihtiyacım var.
 
