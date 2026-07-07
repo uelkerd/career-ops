@@ -125,7 +125,7 @@ console.log(`\n📊 Checking ${entries.length} entries in applications.md\n`);
 // --- Check 1: Canonical statuses ---
 let badStatuses = 0;
 for (const e of entries) {
-  const clean = e.status.replace(/\*\*/g, '').trim().toLowerCase();
+  const clean = e.status.replace(/\*\*/g, '').trim().toLowerCase().replace(/\u0307/g, '');
   // Strip trailing dates
   const statusOnly = clean.replace(/\s+\d{4}-\d{2}-\d{2}.*$/, '').trim();
 
