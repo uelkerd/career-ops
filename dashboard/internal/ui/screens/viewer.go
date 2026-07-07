@@ -10,6 +10,7 @@ import (
 	"github.com/charmbracelet/lipgloss/table"
 	"github.com/charmbracelet/x/ansi"
 
+	"github.com/santifer/career-ops/dashboard/internal/i18n"
 	"github.com/santifer/career-ops/dashboard/internal/theme"
 )
 
@@ -619,8 +620,8 @@ func (m ViewerModel) renderFooter() string {
 	descStyle := lipgloss.NewStyle().Foreground(m.theme.Subtext)
 
 	return style.Render(
-		keyStyle.Render("↑↓") + descStyle.Render(" scroll  ") +
-			keyStyle.Render("PgUp/Dn") + descStyle.Render(" page  ") +
-			keyStyle.Render("g/G") + descStyle.Render(" top/end  ") +
-			keyStyle.Render("Esc") + descStyle.Render(" back"))
+		keyStyle.Render("↑↓") + descStyle.Render(i18n.Current.HelpScroll) +
+			keyStyle.Render("PgUp/Dn") + descStyle.Render(i18n.Current.HelpPage) +
+			keyStyle.Render("g/G") + descStyle.Render(i18n.Current.HelpTopEnd) +
+			keyStyle.Render("Esc") + descStyle.Render(i18n.Current.HelpBack))
 }

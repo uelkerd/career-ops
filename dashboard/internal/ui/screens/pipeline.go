@@ -2,16 +2,15 @@ package screens
 
 import (
 	"fmt"
-	"math"
 	"path/filepath"
 	"sort"
 	"strings"
-	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 
 	"github.com/santifer/career-ops/dashboard/internal/data"
+	"github.com/santifer/career-ops/dashboard/internal/i18n"
 	"github.com/santifer/career-ops/dashboard/internal/model"
 	"github.com/santifer/career-ops/dashboard/internal/theme"
 )
@@ -113,10 +112,10 @@ const (
 
 // colDef describes one optional column for the picker UI.
 type colDef struct {
-	id     ColumnID
-	header string
-	hint   string
-	width  int
+	id          ColumnID
+	header      string
+	hint        string
+	width       int
 	onByDefault bool
 }
 
@@ -835,13 +834,13 @@ func (m PipelineModel) renderSearchBar() string {
 	}
 
 	tabFiltered := m.countForFilter(pipelineTabs[m.activeTab].filter)
-	matchInfo := hintStyle.Render(fmt.Sprintf("  %d/%d matching", len(m.filtered), tabFiltered))
+	matchInfo := hintStyle.Render(fmt.Sprintf(i18n.Current.SearchMatching, len(m.filtered), tabFiltered))
 
 	hint := ""
 	if m.searchInput {
-		hint = hintStyle.Render("   Enter: keep   Esc: cancel   Ctrl+U: clear")
+		hint = hintStyle.Render(i18n.Current.SearchHintInput)
 	} else {
-		hint = hintStyle.Render("   Esc: clear   /: edit")
+		hint = hintStyle.Render(i18n.Current.SearchHintNormal)
 	}
 
 	return style.Render(prompt + " " + display + matchInfo + hint)
@@ -857,9 +856,9 @@ func (m PipelineModel) renderHeader() string {
 
 	right := lipgloss.NewStyle().Foreground(m.theme.Subtext)
 	avg := fmt.Sprintf("%.1f", m.metrics.AvgScore)
-	info := right.Render(fmt.Sprintf("%d offers | Avg %s/5", m.metrics.Total, avg))
+	info := right.Render(fmt.Sprintf(i18n.Current.OffersSummary, m.metrics.Total, avg))
 
-	title := lipgloss.NewStyle().Bold(true).Foreground(m.theme.Blue).Render("CAREER PIPELINE")
+	title := lipgloss.NewStyle().Bold(true).Foreground(m.theme.Blue).Render(i18n.Current.AppTitle)
 	gap := m.width - lipgloss.Width(title) - lipgloss.Width(info) - 4
 	if gap < 1 {
 		gap = 1
@@ -875,7 +874,7 @@ func (m PipelineModel) renderTabs() string {
 	for i, tab := range pipelineTabs {
 		// Count items for this tab
 		count := m.countForFilter(tab.filter)
-		label := fmt.Sprintf(" %s (%d) ", tab.label, count)
+		label := fmt.Sprintf(" %s (%d) ", m.tabLabel(tab.filter), count)
 
 		if i == m.activeTab {
 			style := lipgloss.NewStyle().
@@ -948,9 +947,9 @@ func (m PipelineModel) renderSortBar() string {
 		Width(m.width).
 		Padding(0, 2)
 
-	sortLabel := fmt.Sprintf("[Sort: %s]", m.sortMode)
-	viewLabel := fmt.Sprintf("[View: %s]", m.viewMode)
-	count := fmt.Sprintf("%d shown", len(m.filtered))
+	sortLabel := fmt.Sprintf(i18n.Current.SortLabel, i18n.Current.SortModeLabel(m.sortMode))
+	viewLabel := fmt.Sprintf(i18n.Current.ViewLabel, i18n.Current.ViewModeLabel(m.viewMode))
+	count := fmt.Sprintf(i18n.Current.ShownCount, len(m.filtered))
 
 	return style.Render(fmt.Sprintf("%s  %s  %s", sortLabel, viewLabel, count))
 }
@@ -960,7 +959,7 @@ func (m PipelineModel) renderBody() string {
 		emptyStyle := lipgloss.NewStyle().
 			Foreground(m.theme.Subtext).
 			Padding(1, 2)
-		return emptyStyle.Render("No offers match this filter")
+		return emptyStyle.Render(i18n.Current.NoOffersMatch)
 	}
 
 	var lines []string
@@ -1013,7 +1012,7 @@ func (m PipelineModel) colVisible(id ColumnID) bool {
 }
 
 func (m PipelineModel) columnWidths() colWidths {
-	c := colWidths{num: 5, score: 5, company: 16, status: 12}
+	c := colWidths{num: 5, score: 5, company: 16, status: 15}
 	if m.colVisible(ColDate) {
 		c.date = 10
 	}
@@ -1110,28 +1109,28 @@ func (m PipelineModel) renderColumnHeader() string {
 
 	segments := []string{
 		cell("#", cw.num),
-		h.Render("FIT"), // score cell is unpadded, always 3 runes wide
+		h.Render(i18n.Current.ColFit), // score cell is unpadded, always 3 runes wide
 	}
 	if cw.date > 0 {
-		segments = append(segments, cell("APPLIED", cw.date))
+		segments = append(segments, cell(i18n.Current.ColApplied, cw.date))
 	}
-	segments = append(segments, cell("COMPANY", cw.company))
-	segments = append(segments, cell("ROLE", cw.role))
-	segments = append(segments, cell("STATUS", cw.status))
+	segments = append(segments, cell(i18n.Current.ColCompany, cw.company))
+	segments = append(segments, cell(i18n.Current.ColRole, cw.role))
+	segments = append(segments, cell(i18n.Current.ColStatus, cw.status))
 	if cw.loc > 0 {
-		segments = append(segments, cell("LOCATION", cw.loc))
+		segments = append(segments, cell(i18n.Current.ColLocation, cw.loc))
 	}
 	if cw.pay > 0 {
-		segments = append(segments, cell("PAY", cw.pay))
+		segments = append(segments, cell(i18n.Current.ColPay, cw.pay))
 	}
 	if cw.rpt > 0 {
-		segments = append(segments, cell("RPT", cw.rpt))
+		segments = append(segments, cell(i18n.Current.ColReport, cw.rpt))
 	}
 	if cw.pdf > 0 {
-		segments = append(segments, cell("PDF", cw.pdf))
+		segments = append(segments, cell(i18n.Current.ColPDF, cw.pdf))
 	}
 	if cw.last > 0 {
-		segments = append(segments, cell("LAST", cw.last))
+		segments = append(segments, cell(i18n.Current.ColLast, cw.last))
 	}
 
 	padStyle := lipgloss.NewStyle().Padding(0, 2)
@@ -1248,17 +1247,17 @@ func (m PipelineModel) renderPreview() string {
 				loc = app.Location
 			}
 		}
-		facts = append(facts, labelStyle.Render("Loc: ")+valueStyle.Render(loc))
+		facts = append(facts, labelStyle.Render(i18n.Current.LabelLoc)+valueStyle.Render(loc))
 	}
 	if app.PayRange != "" {
 		pay := app.PayRange
 		if app.PaySource != "" {
 			pay += " (" + app.PaySource + ")"
 		}
-		facts = append(facts, labelStyle.Render("Pay: ")+valueStyle.Render(pay))
+		facts = append(facts, labelStyle.Render(i18n.Current.LabelPay)+valueStyle.Render(pay))
 	}
 	if app.LastContact != "" {
-		facts = append(facts, labelStyle.Render("Last contact: ")+
+		facts = append(facts, labelStyle.Render(i18n.Current.LabelLast)+
 			valueStyle.Render(fmt.Sprintf("%s (%s)", app.LastContact, formatTimeAgo(app.LastContact))))
 	}
 	if len(facts) > 0 {
@@ -1283,14 +1282,14 @@ func (m PipelineModel) renderPreview() string {
 		}
 		if summary.remote != "" {
 			lines = append(lines, padStyle.Render(
-				labelStyle.Render("Remote: ")+valueStyle.Render(summary.remote)))
+				labelStyle.Render(i18n.Current.LabelRemote)+valueStyle.Render(summary.remote)))
 		}
 	} else if app.Notes != "" && outcome == "" {
 		// Fallback: show notes (the outcome line below already carries them)
 		notes := truncateRunes(app.Notes, m.width-10)
 		lines = append(lines, padStyle.Render(dimStyle.Render(notes)))
 	} else if outcome == "" {
-		lines = append(lines, padStyle.Render(dimStyle.Render("Loading preview...")))
+		lines = append(lines, padStyle.Render(dimStyle.Render(i18n.Current.LoadingPreview)))
 	}
 
 	// Closed-out postings: surface what happened as the last preview line.
@@ -1300,7 +1299,7 @@ func (m PipelineModel) renderPreview() string {
 		// Width budget: 4 cols padding + 9 for the "Outcome: " label + slack,
 		// mirroring the m.width-10 budget of the notes fallback above.
 		lines = append(lines, padStyle.Render(
-			labelStyle.Render("Outcome: ")+valueStyle.Render(truncateRunes(outcome, m.width-14))))
+			labelStyle.Render(i18n.Current.LabelOutcome)+valueStyle.Render(truncateRunes(outcome, m.width-14))))
 	}
 
 	return strings.Join(lines, "\n")
@@ -1334,40 +1333,40 @@ func (m PipelineModel) renderHelp() string {
 
 	if m.colPicker {
 		return style.Render(
-			keyStyle.Render("↑↓/jk") + descStyle.Render(" navigate  ") +
-				keyStyle.Render("SPACE") + descStyle.Render(" toggle  ") +
-				keyStyle.Render("Esc/C") + descStyle.Render(" close"))
+			keyStyle.Render("↑↓/jk") + descStyle.Render(i18n.Current.HelpNavigate) +
+				keyStyle.Render("SPACE") + descStyle.Render(i18n.Current.HelpToggle) +
+				keyStyle.Render("Esc/C") + descStyle.Render(i18n.Current.HelpClose))
 	}
 
 	if m.statusPicker {
 		return style.Render(
-			keyStyle.Render("↑↓/jk") + descStyle.Render(" navigate  ") +
-				keyStyle.Render("Enter") + descStyle.Render(" confirm  ") +
-				keyStyle.Render("Esc") + descStyle.Render(" cancel"))
+			keyStyle.Render("↑↓/jk") + descStyle.Render(i18n.Current.HelpNavigate) +
+				keyStyle.Render("Enter") + descStyle.Render(i18n.Current.HelpConfirm) +
+				keyStyle.Render("Esc") + descStyle.Render(i18n.Current.HelpCancel))
 	}
 
 	if m.searchInput {
 		return style.Render(
-			keyStyle.Render("type") + descStyle.Render(" filter live  ") +
-				keyStyle.Render("Enter") + descStyle.Render(" keep  ") +
-				keyStyle.Render("Ctrl+U") + descStyle.Render(" clear  ") +
-				keyStyle.Render("Esc") + descStyle.Render(" cancel"))
+			keyStyle.Render("type") + descStyle.Render(i18n.Current.HelpFilterLive) +
+				keyStyle.Render("Enter") + descStyle.Render(i18n.Current.HelpKeep) +
+				keyStyle.Render("Ctrl+U") + descStyle.Render(i18n.Current.HelpClear) +
+				keyStyle.Render("Esc") + descStyle.Render(i18n.Current.HelpCancel))
 	}
 
 	brand := lipgloss.NewStyle().Foreground(m.theme.Overlay).Render("career-ops by santifer.io")
 
-	keys := keyStyle.Render("↑↓/jk") + descStyle.Render(" nav  ") +
-		keyStyle.Render("←→/hl") + descStyle.Render(" tabs  ") +
-		keyStyle.Render("/") + descStyle.Render(" search  ") +
-		keyStyle.Render("s") + descStyle.Render(" sort  ") +
-		keyStyle.Render("r") + descStyle.Render(" refresh  ") +
-		keyStyle.Render("Enter") + descStyle.Render(" report  ") +
-		keyStyle.Render("o") + descStyle.Render(" open URL  ") +
-		keyStyle.Render("c") + descStyle.Render(" change  ") +
-		keyStyle.Render("C") + descStyle.Render(" columns  ") +
-		keyStyle.Render("v") + descStyle.Render(" view  ") +
-		keyStyle.Render("p") + descStyle.Render(" progress  ") +
-		keyStyle.Render("q") + descStyle.Render(" quit")
+	keys := keyStyle.Render("↑↓/jk") + descStyle.Render(i18n.Current.HelpNav) +
+		keyStyle.Render("←→/hl") + descStyle.Render(i18n.Current.HelpTabs) +
+		keyStyle.Render("/") + descStyle.Render(i18n.Current.HelpSearch) +
+		keyStyle.Render("s") + descStyle.Render(i18n.Current.HelpSort) +
+		keyStyle.Render("r") + descStyle.Render(i18n.Current.HelpRefresh) +
+		keyStyle.Render("Enter") + descStyle.Render(i18n.Current.HelpReport) +
+		keyStyle.Render("o") + descStyle.Render(i18n.Current.HelpOpenURL) +
+		keyStyle.Render("c") + descStyle.Render(i18n.Current.HelpChange) +
+		keyStyle.Render("C") + descStyle.Render(i18n.Current.HelpColumns) +
+		keyStyle.Render("v") + descStyle.Render(i18n.Current.HelpView) +
+		keyStyle.Render("p") + descStyle.Render(i18n.Current.HelpProgress) +
+		keyStyle.Render("q") + descStyle.Render(i18n.Current.HelpQuit)
 
 	gap := m.width - lipgloss.Width(keys) - lipgloss.Width(brand) - 2
 	if gap < 1 {
@@ -1388,7 +1387,7 @@ func (m PipelineModel) overlayStatusPicker(body string) string {
 		Bold(true)
 
 	var picker []string
-	picker = append(picker, padStyle.Render(borderStyle.Render("Change status:")))
+	picker = append(picker, padStyle.Render(borderStyle.Render(i18n.Current.PickerChangeStatus)))
 
 	for i, opt := range statusOptions {
 		style := lipgloss.NewStyle().Foreground(m.theme.Text).Width(pickerWidth)
@@ -1417,7 +1416,7 @@ func (m PipelineModel) overlayColPicker(body string) string {
 	dimStyle := lipgloss.NewStyle().Foreground(m.theme.Subtext)
 
 	var picker []string
-	picker = append(picker, padStyle.Render(borderStyle.Render("─── Columns (SPACE toggle · ESC close) ───")))
+	picker = append(picker, padStyle.Render(borderStyle.Render(i18n.Current.PickerColumnsTitle)))
 
 	for i, col := range optionalCols {
 		on := m.visibleCols[col.id]
@@ -1488,23 +1487,7 @@ func (m PipelineModel) countByNormStatus(status string) int {
 // precision the data doesn't have (e.g. an entry dated today would otherwise
 // read "13h ago" simply because it's 1pm, not because contact was 13h back).
 func formatTimeAgo(dateStr string) string {
-	t, err := time.ParseInLocation("2006-01-02", dateStr, time.Local)
-	if err != nil {
-		return dateStr // not a date — show it untouched rather than lie
-	}
-	now := time.Now()
-	today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.Local)
-	contactDay := time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, time.Local)
-	// Round to the nearest day so DST transitions don't skew the count.
-	days := int(math.Round(today.Sub(contactDay).Hours() / 24))
-	switch {
-	case days <= 0:
-		return "today"
-	case days == 1:
-		return "yesterday"
-	default:
-		return fmt.Sprintf("%dd ago", days)
-	}
+	return i18n.Current.FormatTimeAgo(dateStr)
 }
 
 // truncateRunes truncates a string to at most maxRunes runes, appending "..." if truncated.
@@ -1520,24 +1503,28 @@ func truncateRunes(s string, maxRunes int) string {
 }
 
 func statusLabel(norm string) string {
-	switch norm {
-	case "interview":
-		return "Interview"
-	case "offer":
-		return "Offer"
-	case "responded":
-		return "Responded"
-	case "applied":
-		return "Applied"
-	case "evaluated":
-		return "Evaluated"
-	case "skip":
-		return "Skip"
-	case "rejected":
-		return "Rejected"
-	case "discarded":
-		return "Discarded"
+	return i18n.Current.StatusLabel(norm)
+}
+
+func (m PipelineModel) tabLabel(filter string) string {
+	switch filter {
+	case filterAll:
+		return i18n.Current.TabAll
+	case filterEvaluated:
+		return i18n.Current.TabEvaluated
+	case filterApplied:
+		return i18n.Current.TabApplied
+	case filterInterview:
+		return i18n.Current.TabInterview
+	case filterTop:
+		return i18n.Current.TabTop
+	case filterSkip:
+		return i18n.Current.TabSkip
+	case filterRejected:
+		return i18n.Current.TabRejected
+	case filterDiscarded:
+		return i18n.Current.TabDiscarded
 	default:
-		return norm
+		return ""
 	}
 }
