@@ -38,11 +38,11 @@ created: 2026-07-07
 
 | Task ID | Plan | Wave | Requirement | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
-| 03-01-01 | 01 | 1 | null | file_check | `ls modes/tr/project.md` | ✅ / ❌ W0 | ⬜ pending |
-| 03-01-02 | 01 | 1 | null | file_check | `ls modes/tr/training.md` | ✅ / ❌ W0 | ⬜ pending |
-| 03-01-03 | 01 | 1 | null | grep | `grep "Applied" modes/tr/tracker.md` | ✅ / ❌ W0 | ⬜ pending |
-| 03-01-04 | 01 | 1 | null | file_check | `ls modes/tr/auto-pipeline.md` | ✅ / ❌ W0 | ⬜ pending |
-| 03-01-05 | 01 | 2 | null | grep | `grep "%100" modes/tr/README.md` | ✅ / ❌ W0 | ⬜ pending |
+| translate-project-mode | 03 | 1 | null | file_check | `ls modes/tr/project.md` | ✅ / ❌ W0 | ⬜ pending |
+| translate-training-mode | 03 | 1 | null | file_check | `ls modes/tr/training.md` | ✅ / ❌ W0 | ⬜ pending |
+| translate-tracker-mode | 03 | 1 | null | grep | `grep "Applied" modes/tr/tracker.md` | ✅ / ❌ W0 | ⬜ pending |
+| translate-auto-pipeline-mode | 03 | 1 | null | file_check | `ls modes/tr/auto-pipeline.md` | ✅ / ❌ W0 | ⬜ pending |
+| update-turkish-readme | 03 | 2 | null | grep | `grep "%100" modes/tr/README.md` | ✅ / ❌ W0 | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
