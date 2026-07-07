@@ -1,6 +1,6 @@
 # Mod: followup -- Takip Ritmi (Cadence) İzleyici
 
-> **`voice-dna.md` dosyasını (varsa) oku ve oluşturulan her e-posta/LinkedIn taslağına uygula.** Bu mod bağımsızdır — `_shared.md` dosyasını YÜKLEMEZ, bu yüzden `voice-dna.md` dosyasını doğrudan oku. Takip taslakları sohbete dayalıdır (conversational), bu nedenle tam korumayı (guardrail) uygula: yasaklı kelimeler/ifadeler/kalıplar, m-tire (em-dash) yok, olumsuz paralellikler yok (§3-4) VE sohbete dayalı ses — kısaltmalar, değişken ritim, doğrudan "Ben"/"Sen" kullanımı (§1-2). Asla `cv.md` içindeki gerçek bir metriği stil uğruna çıkarma veya yumuşatma.
+> **`voice-dna.md` dosyasını (varsa) oku ve oluşturulan her e-posta/LinkedIn taslağına uygula.** Bu mod bağımsızdır — `_shared.md` dosyasını YÜKLEMEZ, bu yüzden `voice-dna.md` dosyasını doğrudan oku. Takip taslakları sohbete dayalıdır (conversational), bu nedenle tam korumayı (guardrail) uygula: yasaklı kelimeler/ifadeler/kalıplar, m-tire (em-dash) yok, olumsuz paralellikler yok (§3-4) VE sohbete dayalı üslup — kısaltmalar, değişken ritim, doğrudan "Ben"/"Sen" kullanımı (§1-2). Asla `cv.md` içindeki gerçek bir metriği stil uğruna çıkarma veya yumuşatma.
 
 ## Amaç
 
@@ -63,7 +63,7 @@ Yalnızca her **gecikmiş (overdue)** veya **acil (urgent)** giriş için:
 3-4 cümlelik bir e-posta oluştur:
 
 1. **1. Cümle:** Belirli role + ne zaman başvurduğuna atıfta bulun. Belirgin ol — şirket adını ve rol başlığını belirt.
-2. **2. Cümle:** Raporun B Bloğu eşleşmesinden somut bir değer katan nokta veya cv.md'den bir kanıt noktası. Mümkünse sayısallaştır (quantify).
+2. **2. Cümle:** Raporun B Bloğu eşleşmesinden somut bir değer katan nokta veya cv.md'den bir kanıt noktası. Mümkünse nicelleştir (quantify).
 3. **3. Cümle:** Yumuşak bir istek + müsaitlik durumu. ("Bu hafta" veya "önümüzdeki Salı" gibi) spesifik bir zaman aralığı sun.
 4. **4. Cümle (İsteğe bağlı):** İlgili yeni bir proje veya başarıdan kısaca bahset.
 
@@ -162,7 +162,7 @@ Kullanıcı inceleyip bir takip gönderdiğini söyledikten sonra, bunu kaydet:
 
 `#42` başvuru numarasıdır, ilk tarih sabitlenmiş (pinned) SONRAKİ takip tarihidir ve `(set …)` sabitlemenin yapıldığı gündür. Sabitlemeler, ayarlanan tarih veya sonrasında bir takip kaydedilene kadar hesaplanan programdan önceliklidir; başvuru başına en son sabitleme geçerli olur; satırı silmek sabitlemeyi temizler.
 
-Bir başvuru "Applied" (Başvuruldu) durumuna geçtiğinde sabitlemeler OTOMATİK olarak eklenebilir (seeded) — `apply` modunun Adım 9'u tarafından çalıştırılan `node followup-seed.mjs <num>`, ilk takibi "başvuru tarihi + `applied_first` ritmi" şeklinde planlayan bir sabitleme ekler. Ekleme (seeding) etkisizdir (idempotent) ve daha sonraki bir Rejected/Discarded geçişi tarafından geride bırakılan geçersiz bir sabitleme zararsızdır, çünkü ritim analizi eyleme dönüştürülemeyen durumları yok sayar.
+Bir başvuru "Applied" (Başvuruldu) durumuna geçtiğinde sabitlemeler OTOMATİK olarak eklenebilir (seeded) — `apply` modunun Adım 9'u tarafından çalıştırılan `node followup-seed.mjs <num>`, ilk takibi "başvuru tarihi + `applied_first` ritmi" şeklinde planlayan bir sabitleme ekler. Ekleme (seeding) idempotenttır (tekrarı aynı sonucu verir) ve daha sonraki bir Rejected/Discarded geçişi tarafından geride bırakılan geçersiz bir sabitleme zararsızdır, çünkü ritim analizi eyleme dönüştürülemeyen durumları yok sayar.
 
 ## Adım 6 — Özet
 
