@@ -46,6 +46,7 @@ func (m appModel) Init() tea.Cmd {
 	return nil
 }
 
+// Update handles global app state and routes messages to active screens.
 func (m appModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	if keyMsg, ok := msg.(tea.KeyMsg); ok {
 		switch keyMsg.String() {

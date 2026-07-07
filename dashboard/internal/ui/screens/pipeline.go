@@ -229,6 +229,11 @@ type PipelineModel struct {
 	discardInputVal string
 }
 
+// IsSearchInputActive returns true if the search input is currently focused
+func (m PipelineModel) IsSearchInputActive() bool {
+	return m.searchInput
+}
+
 // NewPipelineModel creates a new pipeline screen.
 func NewPipelineModel(t theme.Theme, apps []model.CareerApplication, metrics model.PipelineMetrics, careerOpsPath string, width, height int) PipelineModel {
 	visible := make(map[ColumnID]bool)
