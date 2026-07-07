@@ -273,13 +273,13 @@ func TestResolveTrackerColumnsDuplicateHeaderLastWins(t *testing.T) {
 |---|-------|---------|------|-------|--------|-----|--------|-------|
 | 1 | stray | Acme | Engineer | 4.0/5 | Applied | ✅ | — | real note |`, "\n")
 	cols := resolveTrackerColumns(dup)
+	// Verify that the last "Notes" column wins
 	if cols["notes"] != 8 {
-		t.Errorf("notes index = %d, expected 8 (last occurrence wins, like tracker-parse.mjs)", cols["notes"])
+		t.Fatalf("notes index = %d, expected 8 (tracker-parse.mjs parity)", cols["notes"])
 	}
 }
 
-
-
+// TestNormalizeStatus verifies that localized string variants map to the canonical English form.
 func TestNormalizeStatus(t *testing.T) {
 	tests := []struct {
 		input string
