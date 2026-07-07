@@ -72,6 +72,96 @@ type Catalog struct {
 	StatusRejected  string
 	StatusDiscarded string
 	StatusSkip      string
+
+	// Additional UI strings
+	NoData        string
+	EmptyFile     string
+	RateResponse  string
+	RateInterview string
+	RateOffer     string
+
+	// Footer descriptions & hints
+	HelpNav        string
+	HelpTabs       string
+	HelpSearch     string
+	HelpSort       string
+	HelpRefresh    string
+	HelpReport     string
+	HelpOpenURL    string
+	HelpChange     string
+	HelpColumns    string
+	HelpView       string
+	HelpProgress   string
+	HelpQuit       string
+	HelpScroll     string
+	HelpPage       string
+	HelpTopEnd     string
+	HelpBack       string
+	HelpNavigate   string
+	HelpToggle     string
+	HelpClose      string
+	HelpConfirm    string
+	HelpCancel     string
+	HelpFilterLive string
+	HelpKeep       string
+	HelpClear      string
+
+	// Picker overlay titles & bar hints
+	PickerChangeStatus string
+	PickerColumnsTitle string
+	SearchHintInput    string
+	SearchHintNormal   string
+	SearchMatching     string
+	SortLabel          string
+	ViewLabel          string
+	ShownCount         string
+	ColReport          string
+	ColPDF             string
+
+	// Sort & view modes
+	SortScore    string
+	SortDate     string
+	SortCompany  string
+	SortStatus   string
+	SortLocation string
+	SortPay      string
+	SortLast     string
+	ViewGrouped  string
+	ViewFlat     string
+}
+
+// SortModeLabel returns the localized display label for a sort mode ("score", "date", etc.).
+func (c *Catalog) SortModeLabel(mode string) string {
+	switch strings.ToLower(strings.TrimSpace(mode)) {
+	case "score":
+		return c.SortScore
+	case "date":
+		return c.SortDate
+	case "company":
+		return c.SortCompany
+	case "status":
+		return c.SortStatus
+	case "location":
+		return c.SortLocation
+	case "pay":
+		return c.SortPay
+	case "last":
+		return c.SortLast
+	default:
+		return mode
+	}
+}
+
+// ViewModeLabel returns the localized display label for a view mode ("grouped" or "flat").
+func (c *Catalog) ViewModeLabel(mode string) string {
+	switch strings.ToLower(strings.TrimSpace(mode)) {
+	case "grouped":
+		return c.ViewGrouped
+	case "flat":
+		return c.ViewFlat
+	default:
+		return mode
+	}
 }
 
 // StatusLabel returns the localized display label for a canonical status ID
@@ -184,6 +274,62 @@ var En = Catalog{
 	StatusRejected:  "Rejected",
 	StatusDiscarded: "Discarded",
 	StatusSkip:      "SKIP",
+
+	// Additional UI strings
+	NoData:        "No data",
+	EmptyFile:     "(empty file)",
+	RateResponse:  "Response Rate: ",
+	RateInterview: "Interview Rate: ",
+	RateOffer:     "Offer Rate: ",
+
+	// Footer descriptions & hints
+	HelpNav:        " nav  ",
+	HelpTabs:       " tabs  ",
+	HelpSearch:     " search  ",
+	HelpSort:       " sort  ",
+	HelpRefresh:    " refresh  ",
+	HelpReport:     " report  ",
+	HelpOpenURL:    " open URL  ",
+	HelpChange:     " change  ",
+	HelpColumns:    " columns  ",
+	HelpView:       " view  ",
+	HelpProgress:   " progress  ",
+	HelpQuit:       " quit",
+	HelpScroll:     " scroll  ",
+	HelpPage:       " page  ",
+	HelpTopEnd:     " top/end  ",
+	HelpBack:       " back",
+	HelpNavigate:   " navigate  ",
+	HelpToggle:     " toggle  ",
+	HelpClose:      " close",
+	HelpConfirm:    " confirm  ",
+	HelpCancel:     " cancel",
+	HelpFilterLive: " filter live  ",
+	HelpKeep:       " keep  ",
+	HelpClear:      " clear  ",
+
+	// Picker overlay titles & bar hints
+	PickerChangeStatus: "Change status:",
+	PickerColumnsTitle: "─── Columns (SPACE toggle · ESC close) ───",
+	SearchHintInput:    "   Enter: keep   Esc: cancel   Ctrl+U: clear",
+	SearchHintNormal:   "   Esc: clear   /: edit",
+	SearchMatching:     "  %d/%d matching",
+	SortLabel:          "[Sort: %s]",
+	ViewLabel:          "[View: %s]",
+	ShownCount:         "%d shown",
+	ColReport:          "RPT",
+	ColPDF:             "PDF",
+
+	// Sort & view modes
+	SortScore:    "score",
+	SortDate:     "date",
+	SortCompany:  "company",
+	SortStatus:   "status",
+	SortLocation: "location",
+	SortPay:      "pay",
+	SortLast:     "last",
+	ViewGrouped:  "grouped",
+	ViewFlat:     "flat",
 }
 
 // Tr is the static Turkish translation catalog.
@@ -250,6 +396,62 @@ var Tr = Catalog{
 	StatusRejected:  "Reddedildi",
 	StatusDiscarded: "İptal Edildi",
 	StatusSkip:      "Uygun Değil",
+
+	// Additional UI strings
+	NoData:        "Veri yok",
+	EmptyFile:     "(boş dosya)",
+	RateResponse:  "Yanıt Oranı: ",
+	RateInterview: "Mülakat Oranı: ",
+	RateOffer:     "Teklif Oranı: ",
+
+	// Footer descriptions & hints
+	HelpNav:        " gezin  ",
+	HelpTabs:       " sekmeler  ",
+	HelpSearch:     " ara  ",
+	HelpSort:       " sırala  ",
+	HelpRefresh:    " yenile  ",
+	HelpReport:     " rapor  ",
+	HelpOpenURL:    " URL aç  ",
+	HelpChange:     " durum  ",
+	HelpColumns:    " sütunlar  ",
+	HelpView:       " görünüm  ",
+	HelpProgress:   " ilerleme  ",
+	HelpQuit:       " çıkış",
+	HelpScroll:     " kaydır  ",
+	HelpPage:       " sayfa  ",
+	HelpTopEnd:     " baş/son  ",
+	HelpBack:       " geri",
+	HelpNavigate:   " gezin  ",
+	HelpToggle:     " değiştir  ",
+	HelpClose:      " kapat",
+	HelpConfirm:    " onayla  ",
+	HelpCancel:     " iptal",
+	HelpFilterLive: " canlı filtrele  ",
+	HelpKeep:       " kaydet  ",
+	HelpClear:      " temizle  ",
+
+	// Picker overlay titles & bar hints
+	PickerChangeStatus: "Durumu değiştir:",
+	PickerColumnsTitle: "─── Sütunlar (SPACE değiştir · ESC kapat) ───",
+	SearchHintInput:    "   Enter: kaydet   Esc: iptal   Ctrl+U: temizle",
+	SearchHintNormal:   "   Esc: temizle   /: düzenle",
+	SearchMatching:     "  %d/%d eşleşen",
+	SortLabel:          "[Sırala: %s]",
+	ViewLabel:          "[Görünüm: %s]",
+	ShownCount:         "%d gösterilen",
+	ColReport:          "RAP",
+	ColPDF:             "PDF",
+
+	// Sort & view modes
+	SortScore:    "puan",
+	SortDate:     "tarih",
+	SortCompany:  "şirket",
+	SortStatus:   "durum",
+	SortLocation: "konum",
+	SortPay:      "ücret",
+	SortLast:     "son",
+	ViewGrouped:  "gruplu",
+	ViewFlat:     "düz",
 }
 
 // Current points to the active language catalog. Defaults to English (&En).
