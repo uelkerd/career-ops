@@ -88,6 +88,8 @@ type Catalog struct {
 	HelpRefresh    string
 	HelpReport     string
 	HelpOpenURL    string
+	HelpOpenPDF    string
+	HelpRegenPDF   string
 	HelpChange     string
 	HelpColumns    string
 	HelpView       string
@@ -293,6 +295,8 @@ var En = Catalog{
 	HelpRefresh:    " refresh  ",
 	HelpReport:     " report  ",
 	HelpOpenURL:    " open URL  ",
+	HelpOpenPDF:    " open PDF  ",
+	HelpRegenPDF:   " regen PDF  ",
 	HelpChange:     " change  ",
 	HelpColumns:    " columns  ",
 	HelpView:       " view  ",
@@ -415,6 +419,8 @@ var Tr = Catalog{
 	HelpRefresh:    " yenile  ",
 	HelpReport:     " rapor  ",
 	HelpOpenURL:    " URL aç  ",
+	HelpOpenPDF:    " PDF'i aç  ",
+	HelpRegenPDF:   " PDF üret  ",
 	HelpChange:     " durum  ",
 	HelpColumns:    " sütunlar  ",
 	HelpView:       " görünüm  ",
