@@ -723,11 +723,11 @@ func (m ViewerModel) renderFooter() string {
 	}
 
 	// Render standard footer shortcuts
-	footer := keyStyle.Render("↑↓") + descStyle.Render(i18n.Current.HelpScroll) +
-		keyStyle.Render("PgUp/Dn") + descStyle.Render(i18n.Current.HelpPage) +
-		keyStyle.Render("g/G") + descStyle.Render(i18n.Current.HelpTopEnd) +
-		keyStyle.Render("c") + descStyle.Render(i18n.Current.HelpChange) +
-		keyStyle.Render("Esc") + descStyle.Render(i18n.Current.HelpBack)
+	footer := keyStyle.Render("↑↓") + descStyle.Render(i18n.Current.HelpScroll) + // nav
+		keyStyle.Render("PgUp/Dn") + descStyle.Render(i18n.Current.HelpPage) + // pagination
+		keyStyle.Render("g/G") + descStyle.Render(i18n.Current.HelpTopEnd) + // top/bottom
+		keyStyle.Render("c") + descStyle.Render(i18n.Current.HelpChange) + // status
+		keyStyle.Render("Esc") + descStyle.Render(i18n.Current.HelpBack) // exit
 
 	if m.coverLetterPath != "" {
 		footer += "  " + keyStyle.Render("L") + descStyle.Render(" cover letter")

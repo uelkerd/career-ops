@@ -27,10 +27,10 @@ func TestStatusLabel(t *testing.T) {
 		t.Run(tt.norm, func(t *testing.T) {
 			t.Parallel()
 			if got := En.StatusLabel(tt.norm); got != tt.en {
-				t.Errorf("En.StatusLabel(%q) = %q; want %q", tt.norm, got, tt.en)
+				t.Fatalf("En.StatusLabel(%q) = %q, expected %q", tt.norm, got, tt.en)
 			}
 			if got := Tr.StatusLabel(tt.norm); got != tt.tr {
-				t.Errorf("Tr.StatusLabel(%q) = %q; want %q", tt.norm, got, tt.tr)
+				t.Fatalf("Tr.StatusLabel(%q) = %q, expected %q", tt.norm, got, tt.tr)
 			}
 		})
 	}
