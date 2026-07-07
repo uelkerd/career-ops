@@ -1459,9 +1459,9 @@ func (m PipelineModel) renderColumnHeader() string {
 	if cw.date > 0 {
 		segments = append(segments, cell(i18n.Current.ColApplied, cw.date))
 	}
-	segments = append(segments, cell(i18n.Current.ColCompany, cw.company)) // company header
-	segments = append(segments, cell(i18n.Current.ColRole, cw.role))       // role header
-	segments = append(segments, cell(i18n.Current.ColStatus, cw.status))   // status header
+	segments = append(segments, cell(i18n.Current.ColCompany, cw.company))
+	segments = append(segments, cell(i18n.Current.ColRole, cw.role))
+	segments = append(segments, cell(i18n.Current.ColStatus, cw.status))
 	if cw.loc > 0 {
 		segments = append(segments, cell(i18n.Current.ColLocation, cw.loc))
 	}
