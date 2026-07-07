@@ -1455,9 +1455,9 @@ func (m PipelineModel) renderColumnHeader() string {
 		cell("#", cw.num),
 		h.Render(i18n.Current.ColFit), // score cell is unpadded, always 3 runes wide
 	}
+	// Use localized column header for applied date
 	if cw.date > 0 {
-		segments = append(segments, cell("APPLIED", cw.date))
-		segments = append(segments, cell(i18n.Current.TabApplied, cw.date))
+		segments = append(segments, cell(i18n.Current.ColApplied, cw.date))
 	}
 	segments = append(segments, cell(i18n.Current.ColCompany, cw.company)) // company header
 	segments = append(segments, cell(i18n.Current.ColRole, cw.role))       // role header
