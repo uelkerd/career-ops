@@ -50,7 +50,10 @@ func (m appModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	if keyMsg, ok := msg.(tea.KeyMsg); ok {
 		switch keyMsg.String() {
 		case "t", "T":
-			i18n.ToggleLang()
+			// Toggle language globally, unless user is typing in a search input
+			if !(m.state == viewPipeline && m.pipeline.IsSearchInputActive()) {
+				i18n.ToggleLang()
+			}
 		}
 	}
 

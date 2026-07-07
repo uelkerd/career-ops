@@ -170,6 +170,8 @@ func getOptionalCols() []colDef {
 	}
 }
 
+// getStatusOptions returns localized status labels for UI display only.
+// For data persistence, use getCanonicalStatusOptions() instead.
 func getStatusOptions() []string {
 	return []string{i18n.Current.StatusEvaluated, i18n.Current.StatusApplied, i18n.Current.StatusResponded, i18n.Current.StatusInterview, i18n.Current.StatusOffer, "Hired", i18n.Current.StatusRejected, i18n.Current.StatusDiscarded, i18n.Current.TabSkip}
 }
@@ -1453,6 +1455,7 @@ func (m PipelineModel) renderColumnHeader() string {
 		cell("#", cw.num),
 		h.Render(i18n.Current.ColFit), // score cell is unpadded, always 3 runes wide
 	}
+	// Use localized column header for applied date
 	if cw.date > 0 {
 		segments = append(segments, cell(i18n.Current.ColApplied, cw.date))
 	}
