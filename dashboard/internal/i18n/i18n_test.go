@@ -23,12 +23,16 @@ func TestStatusLabel(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		if got := En.StatusLabel(tt.norm); got != tt.en {
-			t.Errorf("En.StatusLabel(%q) = %q; want %q", tt.norm, got, tt.en)
-		}
-		if got := Tr.StatusLabel(tt.norm); got != tt.tr {
-			t.Errorf("Tr.StatusLabel(%q) = %q; want %q", tt.norm, got, tt.tr)
-		}
+		tt := tt
+		t.Run(tt.norm, func(t *testing.T) {
+			t.Parallel()
+			if got := En.StatusLabel(tt.norm); got != tt.en {
+				t.Errorf("En.StatusLabel(%q) = %q; want %q", tt.norm, got, tt.en)
+			}
+			if got := Tr.StatusLabel(tt.norm); got != tt.tr {
+				t.Errorf("Tr.StatusLabel(%q) = %q; want %q", tt.norm, got, tt.tr)
+			}
+		})
 	}
 }
 
@@ -116,5 +120,87 @@ func TestRuntimeLanguageManagement(t *testing.T) {
 	ToggleLang()
 	if Current != &En || GetLang() != "en" {
 		t.Errorf("after ToggleLang() from Tr, GetLang() = %q; want \"en\"", GetLang())
+	}
+}
+
+func TestSortModeLabel(t *testing.T) {
+	type sortTestCase struct {
+		name string
+		mode string
+		want string
+	}
+
+	enCases := []sortTestCase{
+		{name: "score", mode: "score", want: "score"},
+		{name: "date", mode: "date", want: "date"},
+		{name: "company", mode: "company", want: "company"},
+		{name: "status", mode: "status", want: "status"},
+		{name: "location", mode: "location", want: "location"},
+		{name: "pay", mode: "pay", want: "pay"},
+		{name: "last", mode: "last", want: "last"},
+		{name: "unknown", mode: "unknown", want: "unknown"},
+	}
+
+	for _, tc := range enCases {
+		t.Run("En/"+tc.name, func(t *testing.T) {
+			if got := En.SortModeLabel(tc.mode); got != tc.want {
+				t.Errorf("En.SortModeLabel(%q) = %q; want %q", tc.mode, got, tc.want)
+			}
+		})
+	}
+
+	trCases := []sortTestCase{
+		{name: "score", mode: "score", want: "puan"},
+		{name: "date", mode: "date", want: "tarih"},
+		{name: "company", mode: "company", want: "şirket"},
+		{name: "status", mode: "status", want: "durum"},
+		{name: "location", mode: "location", want: "konum"},
+		{name: "pay", mode: "pay", want: "ücret"},
+		{name: "last", mode: "last", want: "son"},
+		{name: "unknown", mode: "unknown", want: "unknown"},
+	}
+
+	for _, tc := range trCases {
+		t.Run("Tr/"+tc.name, func(t *testing.T) {
+			if got := Tr.SortModeLabel(tc.mode); got != tc.want {
+				t.Errorf("Tr.SortModeLabel(%q) = %q; want %q", tc.mode, got, tc.want)
+			}
+		})
+	}
+}
+
+func TestViewModeLabel(t *testing.T) {
+	type viewTestCase struct {
+		name string
+		mode string
+		want string
+	}
+
+	enCases := []viewTestCase{
+		{name: "grouped", mode: "grouped", want: "grouped"},
+		{name: "flat", mode: "flat", want: "flat"},
+		{name: "unknown", mode: "unknown", want: "unknown"},
+	}
+
+	for _, tc := range enCases {
+		t.Run("En/"+tc.name, func(t *testing.T) {
+			if got := En.ViewModeLabel(tc.mode); got != tc.want {
+				t.Errorf("En.ViewModeLabel(%q) = %q; want %q", tc.mode, got, tc.want)
+			}
+		})
+	}
+
+	trCases := []viewTestCase{
+		{name: "grouped", mode: "grouped", want: "gruplu"},
+		{name: "flat", mode: "flat", want: "düz"},
+		{name: "unknown", mode: "unknown", want: "unknown"},
+	}
+
+	for _, tc := range trCases {
+		t.Run("Tr/"+tc.name, func(t *testing.T) {
+			if got := Tr.ViewModeLabel(tc.mode); got != tc.want {
+				t.Errorf("Tr.ViewModeLabel(%q) = %q; want %q", tc.mode, got, tc.want)
+			}
+		})
 	}
 }

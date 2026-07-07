@@ -722,6 +722,7 @@ func (m ViewerModel) renderFooter() string {
 				keyStyle.Render("Esc/q") + descStyle.Render(i18n.Current.HelpCancel))
 	}
 
+	// Render standard footer shortcuts
 	footer := keyStyle.Render("↑↓") + descStyle.Render(i18n.Current.HelpScroll) +
 		keyStyle.Render("PgUp/Dn") + descStyle.Render(i18n.Current.HelpPage) +
 		keyStyle.Render("g/G") + descStyle.Render(i18n.Current.HelpTopEnd) +

@@ -831,6 +831,7 @@ func (m PipelineModel) sortLess() func(a, b model.CareerApplication) bool {
 
 // workModeRank orders work modes remote-first for the location sort.
 func workModeRank(mode string) int {
+	// Internal language-neutral representations.
 	switch mode {
 	case "Remote":
 		return 0

@@ -274,7 +274,7 @@ func TestResolveTrackerColumnsDuplicateHeaderLastWins(t *testing.T) {
 | 1 | stray | Acme | Engineer | 4.0/5 | Applied | ✅ | — | real note |`, "\n")
 	cols := resolveTrackerColumns(dup)
 	if cols["notes"] != 8 {
-		t.Errorf("notes index = %d, want 8 (last occurrence wins, like tracker-parse.mjs)", cols["notes"])
+		t.Errorf("notes index = %d, expected 8 (last occurrence wins, like tracker-parse.mjs)", cols["notes"])
 	}
 }
 
@@ -332,7 +332,9 @@ func TestNormalizeStatus(t *testing.T) {
 	}
 
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.input, func(t *testing.T) {
+			t.Parallel()
 			if got := NormalizeStatus(tt.input); got != tt.want {
 				t.Errorf("NormalizeStatus(%q) = %q; want %q", tt.input, got, tt.want)
 			}
