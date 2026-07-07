@@ -1713,8 +1713,8 @@ func (m PipelineModel) renderHelp() string {
 		keyStyle.Render("r") + descStyle.Render(i18n.Current.HelpRefresh) +
 		keyStyle.Render("Enter") + descStyle.Render(i18n.Current.HelpReport) +
 		keyStyle.Render("o") + descStyle.Render(i18n.Current.HelpOpenURL) +
-		keyStyle.Render("d") + descStyle.Render(" open PDF  ") +
-		keyStyle.Render("D") + descStyle.Render(" regen PDF  ") +
+		keyStyle.Render("d") + descStyle.Render(i18n.Current.HelpOpenPDF) +
+		keyStyle.Render("D") + descStyle.Render(i18n.Current.HelpRegenPDF) +
 		keyStyle.Render("c") + descStyle.Render(i18n.Current.HelpChange) +
 		keyStyle.Render("C") + descStyle.Render(i18n.Current.HelpColumns) +
 		keyStyle.Render("v") + descStyle.Render(i18n.Current.HelpView) +
