@@ -50,7 +50,7 @@ JSON çıktısını ayrıştır. Şunları içerir:
 
 Eğer komut dosyası `error` döndürürse, hata mesajını göster ve çık.
 
-### `vendorAnalysis` — nasıl sunulmalı (ÖNEMLİ: nedensel tevazu)
+### `vendorAnalysis` — nasıl sunulmalı (ÖNEMLİ: nedensel çıkarımlarda temkinli olmak)
 
 `vendorAnalysis`, her raporun `**URL:**` alanından tespit edilen ATS satıcısına göre **gönderilmiş (submitted)** başvuruları gruplandırır (sadece temiz parmak izlerine sahip topluluk ATS'leri: Greenhouse, Lever, Ashby, Workday — beyaz etiketli (white-labeled) ATS'ler URL'den tespit edilemez ve raporlanmayan bir `unknown` grubuna düşer). `advanceRate` = `Responded`/`Interview`/`Offer` aşamasına ulaşanların oranı (tek başına `Applied` sayılmaz).
 

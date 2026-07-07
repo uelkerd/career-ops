@@ -1,6 +1,6 @@
 # Mod: contacto -- İletişim mesajları
 
-> Oluşturulan her mesaja `voice-dna.md` dosyasını (varsa) uygula — tam koruma (guardrail), sohbet tarzı ses (conversational voice) dahil (Tier 1 + Tier 2). Bkz. `_shared.md` → Voice DNA.
+> Oluşturulan her mesaja `voice-dna.md` dosyasını (varsa) uygula — tam koruma (guardrail), sohbet tarzı üslup (conversational voice) dahil (Tier 1 + Tier 2). Bkz. `_shared.md` → Voice DNA.
 
 Bu modun aynı persona motorunu (İK / İşe alım uzmanı → kesin gereksinimler; İşe Alım Yöneticisi → etki/vizyon) paylaşan iki varyantı vardır:
 
