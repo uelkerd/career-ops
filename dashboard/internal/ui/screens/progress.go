@@ -386,9 +386,10 @@ func (m ProgressModel) renderHelp() string {
 
 	brand := lipgloss.NewStyle().Foreground(m.theme.Overlay).Render("career-ops by santifer.io")
 
-	keys := keyStyle.Render("\u2191\u2193") + descStyle.Render(" scroll  ") +
-		keyStyle.Render("PgUp/Dn") + descStyle.Render(" page  ") +
-		keyStyle.Render("Esc") + descStyle.Render(" back")
+	keys := keyStyle.Render("↑↓") + descStyle.Render(i18n.Current.HelpScroll) +
+		keyStyle.Render("PgUp/Dn") + descStyle.Render(i18n.Current.HelpPage) +
+		keyStyle.Render("t") + descStyle.Render(i18n.Current.HelpLanguage) +
+		keyStyle.Render("Esc") + descStyle.Render(i18n.Current.HelpBack)
 
 	gap := m.width - lipgloss.Width(keys) - lipgloss.Width(brand) - 2
 	if gap < 1 {

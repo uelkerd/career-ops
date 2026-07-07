@@ -174,6 +174,10 @@ func getStatusOptions() []string {
 	return []string{i18n.Current.StatusEvaluated, i18n.Current.StatusApplied, i18n.Current.StatusResponded, i18n.Current.StatusInterview, i18n.Current.StatusOffer, "Hired", i18n.Current.StatusRejected, i18n.Current.StatusDiscarded, i18n.Current.TabSkip}
 }
 
+func getCanonicalStatusOptions() []string {
+	return []string{"Evaluated", "Applied", "Responded", "Interview", "Offer", "Hired", "Rejected", "Discarded", "Skip"}
+}
+
 // statusGroupOrder defines display order for grouped view.
 var statusGroupOrder = []string{"hired", "interview", "offer", "responded", "applied", "evaluated", "skip", "rejected", "discarded"}
 
@@ -667,7 +671,7 @@ func (m PipelineModel) handleStatusPicker(msg tea.KeyMsg) (PipelineModel, tea.Cm
 	case "enter":
 		m.statusPicker = false
 		if app, ok := m.CurrentApp(); ok {
-			newStatus := getStatusOptions()[m.statusCursor]
+			newStatus := getCanonicalStatusOptions()[m.statusCursor]
 			norm := data.NormalizeStatus(newStatus)
 			if norm == "hired" {
 				m.hiredApp = app
@@ -1450,7 +1454,7 @@ func (m PipelineModel) renderColumnHeader() string {
 		h.Render(i18n.Current.ColFit), // score cell is unpadded, always 3 runes wide
 	}
 	if cw.date > 0 {
-		segments = append(segments, cell(i18n.Current.TabApplied, cw.date))
+		segments = append(segments, cell(i18n.Current.ColApplied, cw.date))
 	}
 	segments = append(segments, cell(i18n.Current.ColCompany, cw.company))
 	segments = append(segments, cell(i18n.Current.ColRole, cw.role))
@@ -1715,6 +1719,7 @@ func (m PipelineModel) renderHelp() string {
 		keyStyle.Render("C") + descStyle.Render(i18n.Current.HelpColumns) +
 		keyStyle.Render("v") + descStyle.Render(i18n.Current.HelpView) +
 		keyStyle.Render("p") + descStyle.Render(i18n.Current.HelpProgress) +
+		keyStyle.Render("t") + descStyle.Render(i18n.Current.HelpLanguage) +
 		keyStyle.Render("q") + descStyle.Render(i18n.Current.HelpQuit)
 
 	gap := m.width - lipgloss.Width(keys) - lipgloss.Width(brand) - 2

@@ -727,6 +727,7 @@ func (m ViewerModel) renderFooter() string {
 		keyStyle.Render("PgUp/Dn") + descStyle.Render(i18n.Current.HelpPage) + // pagination
 		keyStyle.Render("g/G") + descStyle.Render(i18n.Current.HelpTopEnd) + // top/bottom
 		keyStyle.Render("c") + descStyle.Render(i18n.Current.HelpChange) + // status
+		keyStyle.Render("t") + descStyle.Render(i18n.Current.HelpLanguage) + // language
 		keyStyle.Render("Esc") + descStyle.Render(i18n.Current.HelpBack) // exit
 
 	if m.coverLetterPath != "" {
@@ -758,7 +759,7 @@ func (m ViewerModel) handleStatusPicker(msg tea.KeyMsg) (ViewerModel, tea.Cmd) {
 	case "enter":
 		m.statusPicker = false
 		m.clampScrollOffset()
-		newStatus := getStatusOptions()[m.statusCursor]
+		newStatus := getCanonicalStatusOptions()[m.statusCursor]
 		return m, func() tea.Msg {
 			return ViewerUpdateStatusMsg{
 				App:       m.app,

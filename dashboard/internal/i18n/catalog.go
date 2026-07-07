@@ -98,6 +98,7 @@ type Catalog struct {
 	HelpScroll     string
 	HelpPage       string
 	HelpTopEnd     string
+	HelpLanguage   string
 	HelpBack       string
 	HelpNavigate   string
 	HelpToggle     string
@@ -305,6 +306,7 @@ var En = Catalog{
 	HelpScroll:     " scroll  ",
 	HelpPage:       " page  ",
 	HelpTopEnd:     " top/end  ",
+	HelpLanguage:   " lang  ",
 	HelpBack:       " back",
 	HelpNavigate:   " navigate  ",
 	HelpToggle:     " toggle  ",
@@ -429,6 +431,7 @@ var Tr = Catalog{
 	HelpScroll:     " kaydır  ",
 	HelpPage:       " sayfa  ",
 	HelpTopEnd:     " baş/son  ",
+	HelpLanguage:   " dil  ",
 	HelpBack:       " geri",
 	HelpNavigate:   " gezin  ",
 	HelpToggle:     " değiştir  ",
