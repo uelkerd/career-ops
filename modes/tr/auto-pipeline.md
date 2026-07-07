@@ -23,7 +23,7 @@ Herhangi bir değerlendirme yapmadan önce ilanın hala yayında olduğunu onayl
 1. Adım 0'daki anlık görüntü/getirilen içerikten ilanı sınıflandırın:
    - **Aktif ilan kanıtı:** başlık/rol + gerçek bir iş tanımı veya başvuru/uygulama yolu
    - **Kapanmış ilan kanıtı:** süresi dolmuş/kapanmış/"artık başvuru kabul edilmiyor", sadece gezinme menüsü/alt bilgi (nav/footer) içeren eksik JD, genel kariyer/arama sayfasına zorunlu yönlendirme veya 404/410
-2. İlan kapanmış görünüyorsa veya sayfa ölü/yedek bir kabuksa, **burada durun**: Adım 1–Adım 4'ü çalıştırmayın. Adaya bağlantının ölü olduğunu söyleyin ve giriş `data/pipeline.md` konumundan geliyorsa, `- [x] ~~Şirket | Rol~~ — ilan aktif değil` (oferta nieaktywna) olarak işaretleyin.
+2. İlan kapanmış görünüyorsa veya sayfa ölü/yedek bir kabuksa, **burada durun**: Adım 1–Adım 4'ü çalıştırmayın. Adaya bağlantının ölü olduğunu söyleyin ve giriş `data/pipeline.md` konumundan geliyorsa, `- [x] ~~Şirket | Rol~~ — ilan aktif değil` olarak işaretleyin.
 3. Sadece JD metni yapıştırıldıysa (URL yoksa), doğrulanacak bir bağlantı yoktur — bu kontrolü atlayıp devam edin.
 
 Bu kontrol çözülene kadar Adım 1'e geçmeyin.
