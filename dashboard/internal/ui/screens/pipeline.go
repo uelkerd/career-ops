@@ -170,13 +170,9 @@ func getOptionalCols() []colDef {
 	}
 }
 
-<<<<<<< HEAD
-var statusOptions = []string{i18n.Current.StatusEvaluated, i18n.Current.StatusApplied, i18n.Current.StatusResponded, i18n.Current.StatusInterview, i18n.Current.StatusOffer, "Hired", i18n.Current.StatusRejected, i18n.Current.StatusDiscarded, i18n.Current.TabSkip}
-=======
 func getStatusOptions() []string {
-	return []string{i18n.Current.StatusEvaluated, i18n.Current.StatusApplied, i18n.Current.StatusResponded, i18n.Current.StatusInterview, i18n.Current.StatusOffer, i18n.Current.StatusRejected, i18n.Current.StatusDiscarded, i18n.Current.TabSkip}
+	return []string{i18n.Current.StatusEvaluated, i18n.Current.StatusApplied, i18n.Current.StatusResponded, i18n.Current.StatusInterview, i18n.Current.StatusOffer, "Hired", i18n.Current.StatusRejected, i18n.Current.StatusDiscarded, i18n.Current.TabSkip}
 }
->>>>>>> 6d0c24b (fix(dashboard): decouple i18n from internal state, fix truncations and test stability)
 
 // statusGroupOrder defines display order for grouped view.
 var statusGroupOrder = []string{"hired", "interview", "offer", "responded", "applied", "evaluated", "skip", "rejected", "discarded"}
