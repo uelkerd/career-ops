@@ -112,15 +112,17 @@ type pipelineTab struct {
 	label  string
 }
 
-var pipelineTabs = []pipelineTab{
-	{filterAll, i18n.Current.TabAll},
-	{filterEvaluated, i18n.Current.TabEvaluated},
-	{filterApplied, i18n.Current.TabApplied},
-	{filterInterview, i18n.Current.TabInterview},
-	{filterTop, i18n.Current.TabTop},
-	{filterSkip, i18n.Current.TabSkip},
-	{filterRejected, i18n.Current.TabRejected},
-	{filterDiscarded, i18n.Current.TabDiscarded},
+func getPipelineTabs() []pipelineTab {
+	return []pipelineTab{
+		{filterAll, i18n.Current.TabAll},
+		{filterEvaluated, i18n.Current.TabEvaluated},
+		{filterApplied, i18n.Current.TabApplied},
+		{filterInterview, i18n.Current.TabInterview},
+		{filterTop, i18n.Current.TabTop},
+		{filterSkip, i18n.Current.TabSkip},
+		{filterRejected, i18n.Current.TabRejected},
+		{filterDiscarded, i18n.Current.TabDiscarded},
+	}
 }
 
 var sortCycle = []string{sortScore, sortDate, sortCompany, sortStatus, sortLocation, sortPay, sortLast}
@@ -147,16 +149,20 @@ type colDef struct {
 	onByDefault bool
 }
 
-var optionalCols = []colDef{
-	{ColDate, i18n.Current.TabApplied, "", 10, true},
-	{ColLocation, i18n.Current.ColLocation, "", 20, true},
-	{ColPay, i18n.Current.ColPay, "", 16, true},
-	{ColHasReport, i18n.Current.ColReport, "✓/—", 4, false},
-	{ColHasPDF, i18n.Current.ColPDF, "✓/—", 4, false},
-	{ColLastContact, i18n.Current.ColLast, "", 10, false},
+func getOptionalCols() []colDef {
+	return []colDef{
+		{ColDate, i18n.Current.ColApplied, "", 10, true},
+		{ColLocation, i18n.Current.ColLocation, "", 20, true},
+		{ColPay, i18n.Current.ColPay, "", 16, true},
+		{ColHasReport, i18n.Current.ColReport, "✓/—", 4, false},
+		{ColHasPDF, i18n.Current.ColPDF, "✓/—", 4, false},
+		{ColLastContact, i18n.Current.ColLast, "", 10, false},
+	}
 }
 
-var statusOptions = []string{i18n.Current.StatusEvaluated, i18n.Current.StatusApplied, i18n.Current.StatusResponded, i18n.Current.StatusInterview, i18n.Current.StatusOffer, i18n.Current.StatusRejected, i18n.Current.StatusDiscarded, i18n.Current.TabSkip}
+func getStatusOptions() []string {
+	return []string{i18n.Current.StatusEvaluated, i18n.Current.StatusApplied, i18n.Current.StatusResponded, i18n.Current.StatusInterview, i18n.Current.StatusOffer, i18n.Current.StatusRejected, i18n.Current.StatusDiscarded, i18n.Current.TabSkip}
+}
 
 // statusGroupOrder defines display order for grouped view.
 var statusGroupOrder = []string{"interview", "offer", "responded", "applied", "evaluated", "skip", "rejected", "discarded"}
@@ -170,7 +176,7 @@ type PipelineModel struct {
 	scrollOffset  int
 	sortMode      string
 	activeTab     int
-	viewMode      string // i18n.Current.ViewGrouped or i18n.Current.ViewFlat
+	viewMode      string // "grouped" or "flat"
 	width, height int
 	theme         theme.Theme
 	careerOpsPath string
@@ -198,7 +204,7 @@ type PipelineModel struct {
 // NewPipelineModel creates a new pipeline screen.
 func NewPipelineModel(t theme.Theme, apps []model.CareerApplication, metrics model.PipelineMetrics, careerOpsPath string, width, height int) PipelineModel {
 	visible := make(map[ColumnID]bool)
-	for _, col := range optionalCols {
+	for _, col := range getOptionalCols() {
 		visible[col.id] = col.onByDefault
 	}
 	m := PipelineModel{
@@ -206,7 +212,7 @@ func NewPipelineModel(t theme.Theme, apps []model.CareerApplication, metrics mod
 		metrics:       metrics,
 		sortMode:      sortScore,
 		activeTab:     0,
-		viewMode:      i18n.Current.ViewGrouped,
+		viewMode:      "grouped",
 		width:         width,
 		height:        height,
 		theme:         t,
@@ -403,7 +409,7 @@ func (m PipelineModel) handleKey(msg tea.KeyMsg) (PipelineModel, tea.Cmd) {
 
 	case "f", "right", "l":
 		m.activeTab++
-		if m.activeTab >= len(pipelineTabs) {
+		if m.activeTab >= len(getPipelineTabs()) {
 			m.activeTab = 0
 		}
 		m.applyFilterAndSort()
@@ -413,7 +419,7 @@ func (m PipelineModel) handleKey(msg tea.KeyMsg) (PipelineModel, tea.Cmd) {
 	case "left", "h":
 		m.activeTab--
 		if m.activeTab < 0 {
-			m.activeTab = len(pipelineTabs) - 1
+			m.activeTab = len(getPipelineTabs()) - 1
 		}
 		m.applyFilterAndSort()
 		m.cursor = 0
@@ -620,8 +626,8 @@ func (m PipelineModel) handleStatusPicker(msg tea.KeyMsg) (PipelineModel, tea.Cm
 
 	case "down", "j":
 		m.statusCursor++
-		if m.statusCursor >= len(statusOptions) {
-			m.statusCursor = len(statusOptions) - 1
+		if m.statusCursor >= len(getStatusOptions()) {
+			m.statusCursor = len(getStatusOptions()) - 1
 		}
 
 	case "up", "k":
@@ -633,7 +639,7 @@ func (m PipelineModel) handleStatusPicker(msg tea.KeyMsg) (PipelineModel, tea.Cm
 	case "enter":
 		m.statusPicker = false
 		if app, ok := m.CurrentApp(); ok {
-			newStatus := statusOptions[m.statusCursor]
+			newStatus := getStatusOptions()[m.statusCursor]
 			return m, func() tea.Msg {
 				return PipelineUpdateStatusMsg{
 					CareerOpsPath: m.careerOpsPath,
@@ -683,8 +689,8 @@ func (m PipelineModel) handleColPicker(msg tea.KeyMsg) (PipelineModel, tea.Cmd) 
 
 	case "down", "j":
 		m.colPickerIdx++
-		if m.colPickerIdx >= len(optionalCols) {
-			m.colPickerIdx = len(optionalCols) - 1
+		if m.colPickerIdx >= len(getOptionalCols()) {
+			m.colPickerIdx = len(getOptionalCols()) - 1
 		}
 
 	case "up", "k":
@@ -694,7 +700,7 @@ func (m PipelineModel) handleColPicker(msg tea.KeyMsg) (PipelineModel, tea.Cmd) 
 		}
 
 	case " ":
-		col := optionalCols[m.colPickerIdx]
+		col := getOptionalCols()[m.colPickerIdx]
 		m.visibleCols[col.id] = !m.visibleCols[col.id]
 	}
 	return m, nil
@@ -747,7 +753,7 @@ func matchesSearch(app model.CareerApplication, query string) bool {
 func (m *PipelineModel) applyFilterAndSort() {
 	var filtered []model.CareerApplication
 
-	currentFilter := pipelineTabs[m.activeTab].filter
+	currentFilter := getPipelineTabs()[m.activeTab].filter
 	for _, app := range m.apps {
 		if !matchesSearch(app, m.searchQuery) {
 			continue
@@ -774,7 +780,7 @@ func (m *PipelineModel) applyFilterAndSort() {
 	})
 
 	// In grouped mode, always sort by status priority first, then by selected sort within groups
-	if m.viewMode == i18n.Current.ViewGrouped {
+	if m.viewMode == "grouped" {
 		sort.SliceStable(filtered, func(i, j int) bool {
 			pi := data.StatusPriority(filtered[i].Status)
 			pj := data.StatusPriority(filtered[j].Status)
@@ -826,13 +832,13 @@ func (m PipelineModel) sortLess() func(a, b model.CareerApplication) bool {
 // workModeRank orders work modes remote-first for the location sort.
 func workModeRank(mode string) int {
 	switch mode {
-	case i18n.Current.ModeRemote:
+	case "Remote":
 		return 0
-	case i18n.Current.ModeRemoteFlex:
+	case "RemoteFlex":
 		return 1
-	case i18n.Current.ModeHybrid:
+	case "Hybrid":
 		return 2
-	case i18n.Current.ModeFull:
+	case "Full":
 		return 3
 	default:
 		return 4
@@ -876,7 +882,7 @@ func (m *PipelineModel) adjustScroll() {
 }
 
 func (m PipelineModel) cursorLineEstimate() int {
-	if m.viewMode != i18n.Current.ViewGrouped {
+	if m.viewMode != "grouped" {
 		return m.cursor
 	}
 	// Account for group headers
@@ -971,7 +977,7 @@ func (m PipelineModel) renderSearchBar() string {
 		display += lipgloss.NewStyle().Foreground(m.theme.Blue).Render("█")
 	}
 
-	tabFiltered := m.countForFilter(pipelineTabs[m.activeTab].filter)
+	tabFiltered := m.countForFilter(getPipelineTabs()[m.activeTab].filter)
 	matchInfo := hintStyle.Render(fmt.Sprintf(i18n.Current.SearchMatching, len(m.filtered), tabFiltered))
 
 	hint := ""
@@ -1009,7 +1015,7 @@ func (m PipelineModel) renderTabs() string {
 	var tabs []string
 	var underParts []string
 
-	for i, tab := range pipelineTabs {
+	for i, tab := range getPipelineTabs() {
 		// Count items for this tab
 		count := m.countForFilter(tab.filter)
 		label := fmt.Sprintf(" %s (%d) ", tab.label, count)
@@ -1108,7 +1114,7 @@ func (m PipelineModel) renderBody() string {
 		norm := data.NormalizeStatus(app.Status)
 
 		// Group header in grouped mode
-		if m.viewMode == i18n.Current.ViewGrouped && norm != prevStatus {
+		if m.viewMode == "grouped" && norm != prevStatus {
 			count := m.countByNormStatus(norm)
 			headerStyle := lipgloss.NewStyle().
 				Bold(true).
@@ -1139,7 +1145,7 @@ type colWidths struct {
 func (m PipelineModel) colVisible(id ColumnID) bool {
 	if m.visibleCols == nil {
 		// Fall back to default for callers before init (tests, etc.)
-		for _, col := range optionalCols {
+		for _, col := range getOptionalCols() {
 			if col.id == id {
 				return col.onByDefault
 			}
@@ -1150,7 +1156,7 @@ func (m PipelineModel) colVisible(id ColumnID) bool {
 }
 
 func (m PipelineModel) columnWidths() colWidths {
-	c := colWidths{num: 5, score: 5, company: 16, status: 12}
+	c := colWidths{num: 5, score: 5, company: 16, status: 16}
 	if m.colVisible(ColDate) {
 		c.date = 10
 	}
@@ -1179,13 +1185,13 @@ func (m PipelineModel) columnWidths() colWidths {
 
 func (m PipelineModel) workModeColor(mode string) lipgloss.Color {
 	switch mode {
-	case i18n.Current.ModeRemote:
+	case "Remote":
 		return m.theme.Green
-	case i18n.Current.ModeRemoteFlex:
+	case "RemoteFlex":
 		return m.theme.Sky
-	case i18n.Current.ModeHybrid:
+	case "Hybrid":
 		return m.theme.Yellow
-	case i18n.Current.ModeFull:
+	case "Full":
 		return m.theme.Red
 	default:
 		return m.theme.Subtext
@@ -1309,7 +1315,7 @@ func (m PipelineModel) renderAppLine(app model.CareerApplication, selected bool)
 	norm := data.NormalizeStatus(app.Status)
 	statusColor := m.statusColorMap()[norm]
 	statusStyle := lipgloss.NewStyle().Foreground(statusColor).Width(cw.status)
-	statusText := statusStyle.Render(statusLabel(norm))
+	statusText := statusStyle.Render(truncateRunes(statusLabel(norm), cw.status))
 
 	segments := []string{
 		numStyle.Render(truncateRunes(numText, cw.num)),
@@ -1538,7 +1544,7 @@ func (m PipelineModel) overlayStatusPicker(body string) string {
 	var picker []string
 	picker = append(picker, padStyle.Render(borderStyle.Render(i18n.Current.PickerChangeStatus)))
 
-	for i, opt := range statusOptions {
+	for i, opt := range getStatusOptions() {
 		style := lipgloss.NewStyle().Foreground(m.theme.Text).Width(pickerWidth)
 		if i == m.statusCursor {
 			style = style.Background(m.theme.Overlay).Bold(true)
@@ -1602,7 +1608,7 @@ func (m PipelineModel) overlayColPicker(body string) string {
 	var picker []string
 	picker = append(picker, padStyle.Render(borderStyle.Render(i18n.Current.PickerColumnsTitle)))
 
-	for i, col := range optionalCols {
+	for i, col := range getOptionalCols() {
 		on := m.visibleCols[col.id]
 		check := "[ ]"
 		checkColor := m.theme.Subtext
@@ -1703,24 +1709,5 @@ func truncateRunes(s string, maxRunes int) string {
 }
 
 func statusLabel(norm string) string {
-	switch norm {
-	case "interview":
-		return i18n.Current.StatusInterview
-	case "offer":
-		return i18n.Current.StatusOffer
-	case "responded":
-		return i18n.Current.StatusResponded
-	case "applied":
-		return i18n.Current.StatusApplied
-	case "evaluated":
-		return i18n.Current.StatusEvaluated
-	case "skip":
-		return "Skip"
-	case "rejected":
-		return i18n.Current.StatusRejected
-	case "discarded":
-		return i18n.Current.StatusDiscarded
-	default:
-		return norm
-	}
+	return i18n.Current.StatusLabel(norm)
 }

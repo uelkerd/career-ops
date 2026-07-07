@@ -33,10 +33,16 @@ func TestStatusLabel(t *testing.T) {
 }
 
 func TestFormatTimeAgo(t *testing.T) {
-	today := time.Now().Format("2006-01-02")
-	yesterday := time.Now().AddDate(0, 0, -1).Format("2006-01-02")
-	threeDaysAgo := time.Now().AddDate(0, 0, -3).Format("2006-01-02")
-	tomorrow := time.Now().AddDate(0, 0, 1).Format("2006-01-02")
+	// Mock time to ensure deterministic tests
+	mockNow := time.Date(2023, 10, 27, 12, 0, 0, 0, time.Local)
+	originalNowFunc := NowFunc
+	NowFunc = func() time.Time { return mockNow }
+	defer func() { NowFunc = originalNowFunc }()
+
+	today := mockNow.Format("2006-01-02")
+	yesterday := mockNow.AddDate(0, 0, -1).Format("2006-01-02")
+	threeDaysAgo := mockNow.AddDate(0, 0, -3).Format("2006-01-02")
+	tomorrow := mockNow.AddDate(0, 0, 1).Format("2006-01-02")
 
 	// English tests
 	if got := En.FormatTimeAgo(today); got != "today" {
