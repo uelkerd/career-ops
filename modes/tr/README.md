@@ -49,8 +49,14 @@ Ardından ilk oturumda Claude'a bu ayarı hatırlat ("profile.yml'e baktım, `la
 | `training.md` | `modes/training.md` (EN) | Eğitim ve kurs değerlendirmesi |
 | `tracker.md` | `modes/tracker.md` (EN) | Başvuru takipçisi |
 | `auto-pipeline.md` | `modes/auto-pipeline.md` (EN) | Tam otomatik süreç (ilan çıkarma, değerlendirme, pdf, yanıt taslağı) |
+| `interview-prep.md` | `modes/interview-prep.md` (EN) | Mülakat hazırlığı |
+| `deep.md` | `modes/deep.md` (EN) | Şirket hakkında derinlemesine araştırma |
+| `contacto.md` | `modes/contacto.md` (ES) | LinkedIn vb. üzerinden ulaşım/bağlantı kurma stratejisi |
+| `teklifler.md` | `modes/ofertas.md` (ES) | Birden fazla teklifi karşılaştırma |
+| `patterns.md` | `modes/patterns.md` (EN) | Reddedilme kalıpları analizi |
+| `followup.md` | `modes/followup.md` (EN) | Başvuru takip (follow-up) stratejisi |
 
-Diğer modlar (scan, batch, pdf, deep, contacto, ofertas) İngilizce/İspanyolca orijinalleriyle çalışmaya devam eder — içerikleri büyük ölçüde araç komutları, dosya yolları ve yapılandırma talimatlarından oluştuğundan dilden bağımsız kalmaları tercih edilmiştir.
+Diğer modlar (`scan`, `batch`, `pdf`) İngilizce/İspanyolca orijinalleriyle çalışmaya devam eder — içerikleri büyük ölçüde araç komutları, dosya yolları ve yapılandırma talimatlarından oluştuğundan dilden bağımsız kalmaları tercih edilmiştir.
 
 ## Türkiye'ye Özgü Piyasa Kapsamı
 
