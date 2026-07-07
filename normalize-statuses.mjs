@@ -45,6 +45,7 @@ function normalizeStatus(raw) {
 
   // Rechazada / Rechazado → Rejected
   if (/^rechazada?$/i.test(s)) return { status: 'Rejected' };
+  if (/^reddedildi$/i.test(s)) return { status: 'Rejected' };
   if (/^rechazado\s+\d{4}/i.test(s)) return { status: 'Rejected' };
 
   // Aplicado with date → Applied (strip date)
@@ -75,13 +76,13 @@ function normalizeStatus(raw) {
   }
 
   // Spanish aliases → English canonicals
-  if (['evaluada'].includes(lower)) return { status: 'Evaluated' };
-  if (['aplicado', 'enviada', 'aplicada', 'applied', 'sent'].includes(lower)) return { status: 'Applied' };
-  if (['respondido'].includes(lower)) return { status: 'Responded' };
-  if (['entrevista'].includes(lower)) return { status: 'Interview' };
-  if (['oferta'].includes(lower)) return { status: 'Offer' };
-  if (['cerrada', 'descartada'].includes(lower)) return { status: 'Discarded' };
-  if (['no aplicar', 'no_aplicar', 'skip'].includes(lower)) return { status: 'SKIP' };
+  if (['evaluada', 'değerlendirildi'].includes(lower)) return { status: 'Evaluated' };
+  if (['aplicado', 'enviada', 'aplicada', 'applied', 'sent', 'başvuruldu'].includes(lower)) return { status: 'Applied' };
+  if (['respondido', 'yanıt verildi'].includes(lower)) return { status: 'Responded' };
+  if (['entrevista', 'mülakat'].includes(lower)) return { status: 'Interview' };
+  if (['oferta', 'teklif'].includes(lower)) return { status: 'Offer' };
+  if (['cerrada', 'descartada', 'iptal edildi'].includes(lower)) return { status: 'Discarded' };
+  if (['no aplicar', 'no_aplicar', 'skip', 'uygun değil'].includes(lower)) return { status: 'SKIP' };
 
   // Unknown — flag it
   return { status: null, unknown: true };
