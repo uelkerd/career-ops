@@ -55,7 +55,7 @@ const ALIASES = {
   'oferta': 'offer', 'teklif': 'offer',
   'rechazado': 'rejected', 'rechazada': 'rejected', 'reddedildi': 'rejected',
   'descartado': 'discarded', 'descartada': 'discarded', 'cerrada': 'discarded', 'cancelada': 'discarded', 'iptal edildi': 'discarded',
-  'no aplicar': 'skip', 'no_aplicar': 'skip', 'monitor': 'skip', 'geo blocker': 'skip', 'uygun değil': 'skip', 'uygun degil': 'skip',
+  'no aplicar': 'skip', 'no_aplicar': 'skip', 'monitor': 'skip', 'geo blocker': 'skip', 'uygun değil': 'skip', 'uygun degil': 'skip', // skip group
 };
 
 let errors = 0;
