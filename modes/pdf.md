@@ -20,8 +20,40 @@
 14. Generate full HTML from template + personalized content
 15. Read `name` from `config/profile.yml` → normalize to kebab-case lowercase (e.g. "John Doe" → "john-doe") → `{candidate}`
 16. Write HTML to `output/cv-{candidate}-{company}.html` (NOT a temp dir — the recorded HTML is what the dashboard's `D` hotkey regenerates from, so it must survive temp cleanup)
-17. Execute: `node generate-pdf.mjs output/cv-{candidate}-{company}.html output/cv-{candidate}-{company}-{YYYY-MM-DD}.pdf --format={letter|a4} --report={report number}` — `{report number}` is the NNN from the report filename/link (e.g. `008` for `reports/008-acme-….md`), not the tracker `#` column. Pass it whenever the application has (or will have) a report; it records the PDF↔report linkage in `data/pdf-index.tsv` so the dashboard can open and regenerate the exact PDF. Omit it only for one-off CVs with no tracker entry.
-18. Report: PDF path, number of pages, keyword coverage %
+17. Build the metadata sidecar and write it to `output/cv-{candidate}-{company}-{YYYY-MM-DD}.meta.json` (see "PDF Metadata" below) — same basename as the PDF, `.meta.json` instead of `.pdf`, so a future regeneration can reuse it without re-deriving.
+18. Execute: `node generate-pdf.mjs output/cv-{candidate}-{company}.html output/cv-{candidate}-{company}-{YYYY-MM-DD}.pdf --format={letter|a4} --report={report number} --meta=output/cv-{candidate}-{company}-{YYYY-MM-DD}.meta.json` — `{report number}` is the NNN from the report filename/link (e.g. `008` for `reports/008-acme-….md`), not the tracker `#` column. Pass it whenever the application has (or will have) a report; it records the PDF↔report linkage in `data/pdf-index.tsv` so the dashboard can open and regenerate the exact PDF. Omit it only for one-off CVs with no tracker entry. `--meta` is not optional for a real application — see below.
+19. Report: PDF path, number of pages, keyword coverage %
+
+## PDF Metadata (mandatory for every generation)
+
+Every CV PDF must carry Document Properties metadata — visible in Adobe Acrobat under File > Document Properties > Custom, or via `exiftool output/<file>.pdf`. This is not cosmetic: recruiter-side ATS/CRM tools and a human doing "Get Info" both read it, and a blank Info dict on an otherwise polished CV reads as generated-and-forgotten.
+
+Build a JSON file (see `generatePDF`'s `--meta=<path.json>` flag) with this shape:
+
+```json
+{
+  "title": "Deniz Ulker | {Tailored Title} | Resume 2026",
+  "author": "Deniz Ulker",
+  "subject": "{Role} Application for {Company}",
+  "keywords": ["JD keyword", "JD keyword", "..."],
+  "custom": {
+    "Role": "{exact JD title}",
+    "Target Company": "{company}",
+    "Target Location": "{city, country}",
+    "Specialisation": "{2-4 comma-separated focus areas}",
+    "Industry Background": "{industries drawn from cv.md, comma-separated}",
+    "Tools": "{tools/stack actually used, from cv.md — never invent}",
+    "Languages": "{from config/profile.yml}",
+    "Work Permit": "{from config/profile.yml}",
+    "Availability": "{from config/profile.yml, or 'Immediate' if unset}"
+  }
+}
+```
+
+Rules:
+- `title`/`author`/`creator`/`producer` get sane defaults from the HTML `<title>` and `config/profile.yml` even if `--meta` is omitted entirely — but `subject`, `keywords`, and everything in `custom` are job-specific and only exist if you build them. **Do not skip `--meta`** for a real application; only a disposable one-off CV can go without it.
+- Every value must trace back to `cv.md`, `config/profile.yml`, or the JD itself — same source-of-truth boundary as the CV content. Never invent a tool, language, or specialisation to pad the field.
+- `keywords` renders as a comma-separated phrase list (not space-joined) — pass full phrases like `"SAP S/4HANA"`, not split words.
 
 ## ATS Rules (clean parsing)
 
