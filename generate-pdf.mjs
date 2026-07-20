@@ -513,7 +513,7 @@ function attachXmpMetadata(pdfDoc, meta, keywords) {
       Length: bytes.length,
     }),
     bytes,
-  );
+  ); // Construct raw metadata stream
   const ref = pdfDoc.context.register(stream);
   pdfDoc.catalog.set(PDFName.of('Metadata'), ref);
 }
