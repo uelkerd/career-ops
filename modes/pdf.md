@@ -39,10 +39,14 @@ Build a JSON file (see `generatePDF`'s `--meta=<path.json>` flag) with this shap
 
 ```json
 {
-  "title": "Deniz Ulker | {Tailored Title} | Resume 2026",
-  "author": "Deniz Ulker",
+  "title": "Deniz Uelker | Senior Software Engineer | Resume 2026",
+  "author": "Deniz Uelker",
   "subject": "{Role} Application for {Company}",
-  "keywords": ["JD keyword", "JD keyword", "..."],
+  "keywords": [
+    "Instruct the agent to generate an extensive list (15-25+) of highly relevant ATS keywords here",
+    "{hard skills, tools, frameworks, methodologies, and domains from JD + CV}",
+    "..."
+  ],
   "custom": {
     "Role": "{exact JD title}",
     "Target Company": "{company}",
@@ -52,7 +56,15 @@ Build a JSON file (see `generatePDF`'s `--meta=<path.json>` flag) with this shap
     "Tools": "{tools/stack actually used, from cv.md — never invent}",
     "Languages": "{from config/profile.yml}",
     "Work Permit": "{from config/profile.yml}",
-    "Availability": "{from config/profile.yml, or 'Immediate' if unset}"
+    "Availability": "{from config/profile.yml, or 'Immediate' if unset}",
+    "Certifications": "{from cv.md, e.g. AWS Certified Solutions Architect}",
+    "Education Level": "{Highest degree from cv.md, e.g. MSc Computer Science}",
+    "Years of Experience": "{Total years derived from cv.md, e.g. 10+}",
+    "GitHub": "{GitHub URL from profile.yml}",
+    "Portfolio": "{Portfolio URL from profile.yml}",
+    "LinkedIn": "{LinkedIn URL from profile.yml}",
+    "Willing to Relocate": "{Yes/No based on profile.yml}",
+    "Remote Preference": "{Hybrid/Remote/On-site from profile.yml}"
   }
 }
 ```
