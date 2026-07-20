@@ -499,10 +499,10 @@ function attachXmpMetadata(pdfDoc, meta, keywords) {
       ${meta.subject ? `<dc:description><rdf:Alt><rdf:li xml:lang="x-default">${xmlEscape(meta.subject)}</rdf:li></rdf:Alt></dc:description>` : ''}
       ${keywords.length ? `<dc:subject><rdf:Bag>${subjectItems}</rdf:Bag></dc:subject>` : ''}
       ${keywords.length ? `<pdf:Keywords>${xmlEscape(keywords.join(', '))}</pdf:Keywords>` : ''}
-      <xmp:CreatorTool>${xmlEscape(meta.creator || 'career-ops')}</xmp:CreatorTool>
-    </rdf:Description>
-  </rdf:RDF>
-</x:xmpmeta>
+      <xmp:CreatorTool>${xmlEscape(meta.creator || 'career-ops')}</xmp:CreatorTool> 
+    </rdf:Description> 
+  </rdf:RDF> 
+</x:xmpmeta> 
 <?xpacket end="w"?>`;
 
   const bytes = Buffer.from(packet, 'utf-8');
