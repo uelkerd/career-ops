@@ -549,11 +549,11 @@ export async function injectPdfMetadata(pdfBuffer, meta) {
   // Governance", "SAP S/4HANA") into one indistinguishable space-joined
   // blob. Writing the Info dict entry directly preserves comma-separated
   // phrase boundaries, matching every prior career-ops CV's Keywords field.
-  const keywords = meta.keywords
+  const keywords = (meta.keywords)
     ? (Array.isArray(meta.keywords) ? meta.keywords : String(meta.keywords).split(','))
         .map((k) => String(k || '').trim())
         .filter(Boolean)
-    : [];
+    : []; // Fallback to empty array
   if (keywords.length) {
     infoDict.set(PDFName.of('Keywords'), PDFHexString.fromText(keywords.join(', ')));
   }

@@ -4838,7 +4838,6 @@ try {
   fail(`verify-pipeline duplicate tracker number test crashed: ${e.message}`);
 }
 
->>>>>>> main
 // ── SHARED ROLE MATCHER + DEDUP-TRACKER SAFETY (#947) ───────────
 // dedup-tracker.mjs used to ship an older fuzzy role matcher than
 // merge-tracker.mjs. That weaker matcher collapsed sibling roles at the same
