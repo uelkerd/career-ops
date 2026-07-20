@@ -2,7 +2,10 @@
   "id": "lockedin",
   "apiVersion": 1,
   "description": "Prepares the LockedIn AI environment for interview screening calls.",
-  "hooks": [],
+  "hooks": [
+    "ingest"
+  ],
+  "skill": "skill.md",
   "requiredEnv": [],
   "humanInTheLoop": true
 }

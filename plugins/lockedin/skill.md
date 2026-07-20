@@ -4,12 +4,14 @@ description: Prepares the LockedIn AI environment by generating the required tex
 ---
 # Skill: lockedin — LockedIn Protocol Prep
 
-When the user asks to prepare the "LockedIn Protocol" or set up Lockedin AI for an interview, run this skill. 
-This skill generates a highly structured package of prompts and documents that the user will upload into Lockedin AI to configure it as an ultimate copilot for their live interview.
+When the user asks to prepare the "LockedIn Protocol" or set up LockedIn AI for an interview, run this skill. 
+This skill generates a highly structured package of prompts and documents that the user will upload into LockedIn AI to configure it as an ultimate copilot for their live interview.
 
 ## Inputs
 
 1. **Company name** and **role title** (required).
+   - *Normalization Rule:* For filenames, `{Company}`, `{Role}`, and `{CandidateName}` MUST be PascalCase with no spaces or special characters (e.g., "DeliveryHero", "ProductManagerTech", "DenizUlker").
+   - *Slug Rule:* For the directory path (`{company-slug}-{role-slug}`), values MUST be lowercase, kebab-case, with special characters removed (e.g., "delivery-hero", "product-manager-tech").
 2. **Evaluation report** in `reports/` or the **Job Description** (required to extract requirements).
 3. **CV** at `cv.md` (and any tailored CV HTML output).
 4. **Profile** at `config/profile.yml` and `modes/_profile.md`.
@@ -32,10 +34,10 @@ Provide **both** options below so the user can choose.
 
 *Option I: Custom Prompt*
 - **Prompt Name:** {Role} at {Company} (max 255 chars)
-- **Prompt Content:** Write a highly specific, persona-driven prompt (max 8000 chars). Tell Lockedin AI exactly what role the user is interviewing for, the core requirements of the job, the user's specific background highlights (anchored in logic/systems thinking for this profile), and how Lockedin should act as a copilot (e.g., "Provide concise, STAR-formatted bullet points", "Flag if I am talking too long", "Focus on technical depth and executive strategy").
+- **Prompt Content:** Write a highly specific, persona-driven prompt (max 8000 chars). Tell LockedIn AI exactly what role the user is interviewing for, the core requirements of the job, the user's specific background highlights (anchored in logic/systems thinking for this profile), and how LockedIn should act as a copilot (e.g., "Provide concise, STAR-formatted bullet points", "Flag if I am talking too long", "Focus on technical depth and executive strategy").
 
 *Option II: Quick Setup*
-Recommend the closest matching pre-built scenario from the list of Lockedin Scenarios (e.g., "Product Manager", "Software Engineering", etc.).
+Recommend the closest matching pre-built scenario from the list of LockedIn Scenarios (e.g., "Product Manager", "Software Engineering", etc.).
 - **Company:** {Company}
 - **Position:** {Role} (max 50 chars)
 - **Interview Objective:** {e.g., "Pass the screening call by proving deep adjacent expertise and slide craftsmanship."}
@@ -84,6 +86,6 @@ Generate and save the following 13 specific `.txt` files directly into the `inte
 
 ## Execution Rules
 
-1. **Be Precise:** Lockedin AI needs dense, high-signal text. Avoid fluff.
+1. **Be Precise:** LockedIn AI needs dense, high-signal text. Avoid fluff.
 2. **Adhere to the Source of Truth:** Never invent candidate experience. Base all SUPPORTING MATERIAL on `cv.md` and `article-digest.md`.
 3. **Save and Inform:** Save all 14 files into the target directory and present a brief summary of the generated structure to the user.
