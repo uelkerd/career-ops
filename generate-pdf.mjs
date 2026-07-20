@@ -18,9 +18,11 @@
  * any divergence from cv.md's section order still fails generation.
  *
  * --meta points to a JSON file of PDF metadata to inject via pdf-lib (see
- * modes/pdf.md "PDF Metadata"). Every field is optional; anything not in the
- * standard set (title/author/subject/keywords) is written as a custom Info
- * dictionary entry, visible in Adobe Acrobat under File > Properties >
+ * modes/pdf.md "PDF Metadata"). Every field is optional; standard fields
+ * include title/author/subject/keywords/creator/producer. Custom PDF metadata
+ * must be provided under the `custom` object (e.g., "custom": { "Role": "Eng" }).
+ * Unknown top-level fields are ignored. Custom fields are written as Info
+ * dictionary entries, visible in Adobe Acrobat under File > Properties >
  * Custom, or via `exiftool file.pdf`. Standard fields fall back to sane
  * defaults (HTML <title>, config/profile.yml full_name) when --meta is
  * omitted or a field is missing, so every generated CV always carries at
@@ -31,7 +33,7 @@
  */
 
 import { chromium } from 'playwright';
-import { PDFDocument, PDFName, PDFString, PDFRawStream, PDFDict } from 'pdf-lib';
+import { PDFDocument, PDFName, PDFString, PDFHexString, PDFRawStream, PDFDict } from 'pdf-lib';
 import { resolve, dirname, relative, sep, isAbsolute } from 'path';
 import { readFile } from 'fs/promises';
 import { mkdirSync, readFileSync, writeFileSync, existsSync } from 'fs';
@@ -457,7 +459,7 @@ export function resolveMetaDefaults(meta, html) {
   }
 
   resolved.creator = resolved.creator || resolved.author || 'career-ops';
-  resolved.producer = 'pdf-lib (https://github.com/Hopding/pdf-lib)';
+  resolved.producer = resolved.producer || 'pdf-lib (https://github.com/Hopding/pdf-lib)';
 
   return resolved;
 }
@@ -505,7 +507,11 @@ function attachXmpMetadata(pdfDoc, meta, keywords) {
 
   const bytes = Buffer.from(packet, 'utf-8');
   const stream = PDFRawStream.of(
-    pdfDoc.context.obj({ Type: 'Metadata', Subtype: 'XML', Length: bytes.length }),
+    pdfDoc.context.obj({
+      Type: PDFName.of('Metadata'),
+      Subtype: PDFName.of('XML'),
+      Length: bytes.length,
+    }),
     bytes,
   );
   const ref = pdfDoc.context.register(stream);
@@ -536,7 +542,7 @@ export async function injectPdfMetadata(pdfBuffer, meta) {
   pdfDoc.setCreator(meta.creator || 'career-ops');
   pdfDoc.setProducer(meta.producer || 'pdf-lib (https://github.com/Hopding/pdf-lib)');
 
-  const infoDict = pdfDoc.context.lookup(pdfDoc.context.trailerInfo.Info);
+  const infoDict = pdfDoc.getInfoDict();
 
   // Bypass pdfDoc.setKeywords() — it hard-codes keywords.join(' ') with no
   // delimiter override, which collapses multi-word phrases ("Master Data
@@ -544,15 +550,17 @@ export async function injectPdfMetadata(pdfBuffer, meta) {
   // blob. Writing the Info dict entry directly preserves comma-separated
   // phrase boundaries, matching every prior career-ops CV's Keywords field.
   const keywords = meta.keywords
-    ? (Array.isArray(meta.keywords) ? meta.keywords : String(meta.keywords).split(',').map((k) => k.trim()))
+    ? (Array.isArray(meta.keywords) ? meta.keywords : String(meta.keywords).split(','))
+        .map((k) => String(k || '').trim())
+        .filter(Boolean)
     : [];
   if (keywords.length) {
-    infoDict.set(PDFName.of('Keywords'), PDFString.of(keywords.join(', ')));
+    infoDict.set(PDFName.of('Keywords'), PDFHexString.fromText(keywords.join(', ')));
   }
 
   for (const [key, value] of Object.entries(meta.custom || {})) {
     if (value === undefined || value === null || value === '') continue;
-    infoDict.set(PDFName.of(key), PDFString.of(String(value)));
+    infoDict.set(PDFName.of(key), PDFHexString.fromText(String(value)));
   }
 
   // Info-dict Keywords alone renders wrapped in quotes in Acrobat's
