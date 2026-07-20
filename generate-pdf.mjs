@@ -309,7 +309,7 @@ async function generatePDF() {
     } else if (arg === '--allow-reorder') {
       allowReorder = true;
     } else if (arg.startsWith('--meta=')) {
-      metaPath = arg.split('=')[1].trim();
+      metaPath = arg.substring(7).trim();
     } else if (!inputPath) {
       inputPath = arg;
     } else if (!outputPath) {
